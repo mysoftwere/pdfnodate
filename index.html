@@ -1,0 +1,2526 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PDF Make Generator - GitHub Pages Edition</title>
+  
+  <!-- Google Fonts: Inter & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+
+  <!-- Client-side Browser Libraries (100% Serverless GitHub Compatible) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+  <!-- html2canvas + jsPDF (separate for reliable PDF generation) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <!-- Preloaded DataURLs for all 19 Viral Images (Zero Canvas Taint on file:// and GitHub) -->
+  <script src="viral_images_data.js"></script>
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg-gradient: linear-gradient(135deg, #f0f4f9 0%, #eef2f7 100%);
+      --card-bg: #ffffff;
+      --card-border: #e2e8f0;
+      --card-active-border: #3b82f6;
+      --card-active-bg: #f8faff;
+      --text-title: #0f172a;
+      --text-body: #1e293b;
+      --text-sub: #64748b;
+      --dropzone-bg: #eff6ff;
+      --dropzone-border: #93c5fd;
+      --dropzone-hover: #dbeafe;
+      --dropzone-drag: #bfdbfe;
+      --dropzone-text: #1e40af;
+      --input-bg: #ffffff;
+      --input-border: #cbd5e1;
+      --input-text: #1e293b;
+      --preview-bg: #f8fafc;
+      --preview-text: #475569;
+      --date-card-bg: #ffffff;
+      --date-card-border: #e2e8f0;
+      --date-card-selected-bg: #eff6ff;
+      --date-card-selected-border: #2563eb;
+      --theme-btn-bg: #f1f5f9;
+      --theme-btn-hover: #e2e8f0;
+      --theme-btn-text: #334155;
+      --log-bg: #0f172a;
+      --log-border: #1e293b;
+      --log-text: #94a3b8;
+    }
+
+    [data-theme="dark"] {
+      --bg-gradient: linear-gradient(135deg, #090d16 0%, #0f172a 100%);
+      --card-bg: #111827;
+      --card-border: #1f2937;
+      --card-active-border: #ef4444;
+      --card-active-bg: #1e1b4b;
+      --text-title: #f8fafc;
+      --text-body: #e2e8f0;
+      --text-sub: #94a3b8;
+      --dropzone-bg: rgba(239, 68, 68, 0.08);
+      --dropzone-border: #ef4444;
+      --dropzone-hover: rgba(239, 68, 68, 0.15);
+      --dropzone-drag: rgba(239, 68, 68, 0.25);
+      --dropzone-text: #fca5a5;
+      --input-bg: #0b0f19;
+      --input-border: #374151;
+      --input-text: #f8fafc;
+      --preview-bg: #0b0f19;
+      --preview-text: #94a3b8;
+      --date-card-bg: #111827;
+      --date-card-border: #1f2937;
+      --date-card-selected-bg: rgba(239, 68, 68, 0.15);
+      --date-card-selected-border: #ef4444;
+      --theme-btn-bg: #1f2937;
+      --theme-btn-hover: #374151;
+      --theme-btn-text: #f8fafc;
+      --log-bg: #060911;
+      --log-border: #1f2937;
+      --log-text: #cbd5e1;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: var(--bg-gradient);
+      color: var(--text-body);
+      min-height: 100vh;
+      padding: 18px 12px 40px;
+      line-height: 1.5;
+    }
+
+    .container {
+      max-width: 860px;
+      margin: 0 auto;
+    }
+
+    /* HEADER */
+    .header-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      padding: 18px 22px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 18px;
+      box-shadow: 0 4px 18px rgba(0, 0, 0, 0.05);
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .header-icon {
+      width: 48px;
+      height: 48px;
+      background: linear-gradient(135deg, #ef4444, #dc2626);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      color: #fff;
+      box-shadow: 0 4px 14px rgba(239, 68, 68, 0.35);
+    }
+
+    .header-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--text-title);
+    }
+
+    .header-sub {
+      font-size: 0.8rem;
+      color: var(--text-sub);
+    }
+
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .theme-toggle-btn {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 7px 12px;
+      border-radius: 8px;
+      background: var(--theme-btn-bg);
+      color: var(--theme-btn-text);
+      border: 1px solid var(--card-border);
+      cursor: pointer;
+      font-size: 0.8rem;
+      font-weight: 600;
+      transition: all 0.2s;
+    }
+
+    .badge-live {
+      background: #10b981;
+      color: #fff;
+      font-size: 0.72rem;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 999px;
+      letter-spacing: 0.5px;
+    }
+
+    /* STEP CARDS */
+    .step-card {
+      background: var(--card-bg);
+      border: 1.5px solid var(--card-border);
+      border-radius: 16px;
+      padding: 20px 22px;
+      margin-bottom: 18px;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+      transition: all 0.2s;
+    }
+
+    .step-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .step-badge {
+      width: 32px;
+      height: 32px;
+      background: #ef4444;
+      color: #fff;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 15px;
+      flex-shrink: 0;
+    }
+
+    .step-title {
+      font-size: 1.02rem;
+      font-weight: 700;
+      color: var(--text-title);
+    }
+
+    .step-sub {
+      font-size: 0.78rem;
+      color: var(--text-sub);
+    }
+
+    /* DROPZONE */
+    .dropzone {
+      border: 2px dashed var(--dropzone-border);
+      background: var(--dropzone-bg);
+      border-radius: 12px;
+      padding: 22px 16px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s;
+      margin-bottom: 14px;
+    }
+
+    .dropzone:hover {
+      background: var(--dropzone-hover);
+    }
+
+    .dropzone-icon {
+      font-size: 30px;
+      margin-bottom: 6px;
+    }
+
+    .dropzone-text {
+      font-size: 0.92rem;
+      font-weight: 700;
+      color: var(--dropzone-text);
+      margin-bottom: 4px;
+    }
+
+    .dropzone-hint {
+      font-size: 0.78rem;
+      color: var(--text-sub);
+      margin-bottom: 10px;
+    }
+
+    .btn-upload {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 7px 16px;
+      background: #ef4444;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    /* LABELS & INPUTS */
+    .label-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 6px;
+    }
+
+    .field-label {
+      font-size: 0.84rem;
+      font-weight: 600;
+      color: var(--text-title);
+    }
+
+    .count-badge {
+      background: #10b981;
+      color: #fff;
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 3px 9px;
+      border-radius: 999px;
+    }
+
+    textarea#titlesArea {
+      width: 100%;
+      background: var(--input-bg);
+      border: 1.5px solid var(--input-border);
+      border-radius: 10px;
+      padding: 12px 14px;
+      color: var(--input-text);
+      font-size: 0.88rem;
+      font-family: inherit;
+      outline: none;
+      resize: vertical;
+      margin-bottom: 14px;
+      transition: border-color 0.2s;
+    }
+
+    textarea#titlesArea:focus {
+      border-color: #ef4444;
+    }
+
+    .input-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    @media (max-width: 600px) {
+      .input-grid { grid-template-columns: 1fr; }
+    }
+
+    .input-group {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .input-group label {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--text-title);
+    }
+
+    .input-group input, .select-input {
+      background: var(--input-bg);
+      border: 1.5px solid var(--input-border);
+      border-radius: 8px;
+      padding: 9px 12px;
+      color: var(--input-text);
+      font-size: 0.84rem;
+      outline: none;
+      font-family: inherit;
+    }
+
+    .input-group input:focus, .select-input:focus {
+      border-color: #ef4444;
+    }
+
+    .input-hint {
+      font-size: 0.72rem;
+      color: var(--text-sub);
+      line-height: 1.4;
+    }
+
+    .filename-preview {
+      background: var(--preview-bg);
+      border: 1px dashed var(--card-border);
+      border-radius: 8px;
+      padding: 9px 14px;
+      font-size: 0.8rem;
+      color: var(--preview-text);
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      word-break: break-all;
+    }
+
+    .preview-val {
+      font-weight: 700;
+      color: #ef4444;
+      font-family: 'JetBrains Mono', Consolas, monospace;
+    }
+
+    .lock-hint {
+      font-size: 0.75rem;
+      color: var(--text-sub);
+      margin-top: 5px;
+    }
+
+    /* STEP 3 IMAGE */
+    .image-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    @media (max-width: 600px) {
+      .image-grid { grid-template-columns: 1fr; }
+    }
+
+    .img-upload-box {
+      border: 1.5px dashed var(--dropzone-border);
+      border-radius: 10px;
+      background: var(--dropzone-bg);
+      padding: 16px;
+      text-align: center;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+    }
+
+    .img-icon { font-size: 28px; }
+    .img-label { font-size: 0.84rem; font-weight: 700; color: #ef4444; }
+    .img-sub { font-size: 0.72rem; color: var(--text-sub); }
+
+    .img-meta {
+      padding: 8px 10px;
+      background: var(--card-bg);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.75rem;
+      border-top: 1px solid var(--card-border);
+    }
+
+    .btn-reset {
+      background: #ef4444;
+      color: #fff;
+      border: none;
+      padding: 3px 8px;
+      border-radius: 4px;
+      font-size: 0.7rem;
+      cursor: pointer;
+    }
+
+    /* Viral Images Selector Gallery */
+    .viral-images-gallery {
+      margin-top: 14px;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(95px, 1fr));
+      gap: 8px;
+      max-height: 180px;
+      overflow-y: auto;
+      padding: 6px;
+      background: var(--input-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 8px;
+    }
+
+    .viral-img-item {
+      border: 2px solid transparent;
+      border-radius: 6px;
+      cursor: pointer;
+      overflow: hidden;
+      position: relative;
+      background: #000;
+      transition: all 0.15s;
+    }
+
+    .viral-img-item:hover, .viral-img-item.active {
+      border-color: #ef4444;
+      transform: scale(0.97);
+    }
+
+    .viral-img-item img {
+      width: 100%;
+      height: 55px;
+      object-fit: cover;
+      display: block;
+    }
+
+    .viral-img-name {
+      font-size: 9px;
+      padding: 2px 4px;
+      background: rgba(0,0,0,0.7);
+      color: #fff;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      text-align: center;
+    }
+
+    /* STEP 4 DATE */
+    .date-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    @media (max-width: 600px) {
+      .date-grid { grid-template-columns: 1fr; }
+    }
+
+    .date-card {
+      border: 1.5px solid var(--date-card-border);
+      background: var(--date-card-bg);
+      border-radius: 10px;
+      padding: 14px;
+      cursor: pointer;
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      transition: all 0.2s;
+    }
+
+    .date-card.selected {
+      border-color: var(--date-card-selected-border);
+      background: var(--date-card-selected-bg);
+    }
+
+    .date-card-label {
+      font-size: 0.84rem;
+      font-weight: 700;
+      color: var(--text-title);
+    }
+
+    .date-card-note {
+      font-size: 0.74rem;
+      color: #ef4444;
+      font-weight: 600;
+      margin-top: 2px;
+    }
+
+    /* STEP 2 ALIGNMENT & RESOLUTION SELECTOR CARDS */
+    .align-cards-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-top: 8px;
+    }
+
+    .res-cards-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 12px;
+      margin-top: 8px;
+    }
+
+    @media (max-width: 600px) {
+      .align-cards-grid, .res-cards-grid { grid-template-columns: 1fr; }
+    }
+
+    .selector-card {
+      border: 1.5px solid var(--card-border);
+      background: var(--card-bg);
+      border-radius: 12px;
+      padding: 14px 16px;
+      cursor: pointer;
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      transition: all 0.2s ease;
+      position: relative;
+    }
+
+    .selector-card:hover {
+      border-color: #ef4444;
+      transform: translateY(-1px);
+    }
+
+    .selector-card.selected {
+      border-color: #ef4444;
+      background: rgba(239, 68, 68, 0.08);
+      box-shadow: 0 0 0 1px #ef4444;
+    }
+
+    [data-theme="dark"] .selector-card.selected {
+      background: rgba(239, 68, 68, 0.15);
+    }
+
+    .selector-card-icon {
+      font-size: 24px;
+      line-height: 1;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    .selector-card-content {
+      flex-grow: 1;
+    }
+
+    .selector-card-title {
+      font-size: 0.88rem;
+      font-weight: 700;
+      color: var(--text-title);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .selector-card-desc {
+      font-size: 0.74rem;
+      color: var(--text-sub);
+      margin-top: 4px;
+      line-height: 1.45;
+    }
+
+    .selector-card-badge {
+      display: inline-block;
+      font-size: 0.68rem;
+      font-weight: 700;
+      padding: 2px 6px;
+      border-radius: 4px;
+      background: #10b981;
+      color: #fff;
+    }
+
+    /* STEP 5 TEMPLATES */
+    .tpl-options-grid label {
+      border: 1.5px solid var(--card-border);
+      padding: 8px 12px;
+      border-radius: 8px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .tpl-options-grid label.selected {
+      border-color: #ef4444;
+      background: rgba(239, 68, 68, 0.08);
+      color: #ef4444;
+    }
+
+    /* SUBMIT BUTTON */
+    .submit-btn {
+      width: 100%;
+      background: linear-gradient(135deg, #ef4444, #dc2626);
+      color: #ffffff;
+      border: none;
+      border-radius: 12px;
+      padding: 16px;
+      font-size: 1.05rem;
+      font-weight: 800;
+      cursor: pointer;
+      box-shadow: 0 4px 20px rgba(239, 68, 68, 0.4);
+      transition: all 0.2s;
+      font-family: inherit;
+    }
+
+    .submit-btn:hover {
+      transform: translateY(-2px);
+      filter: brightness(1.08);
+    }
+
+    .submit-btn:disabled {
+      opacity: 0.65;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .progress-wrap {
+      width: 100%;
+      height: 12px;
+      background: rgba(0, 0, 0, 0.1);
+      border-radius: 999px;
+      overflow: hidden;
+      margin-top: 14px;
+      display: none;
+    }
+
+    .progress-bar {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #ef4444, #10b981);
+      border-radius: 999px;
+      transition: width 0.15s ease;
+    }
+
+    .log-box {
+      margin-top: 14px;
+      background: var(--log-bg);
+      border: 1px solid var(--log-border);
+      border-radius: 10px;
+      padding: 12px 14px;
+      height: 160px;
+      overflow-y: auto;
+      font-family: 'JetBrains Mono', Consolas, monospace;
+      font-size: 0.78rem;
+      color: var(--log-text);
+      line-height: 1.6;
+    }
+
+    /* OUTPUT & INDIVIDUAL DOWNLOAD SECTION */
+    .output-section {
+      margin-top: 20px;
+      border-color: #10b981 !important;
+      background: var(--card-bg);
+    }
+
+    .btn-zip-main {
+      width: 100%;
+      background: linear-gradient(135deg, #10b981, #059669);
+      color: #ffffff;
+      border: none;
+      border-radius: 12px;
+      padding: 16px;
+      font-size: 1.05rem;
+      font-weight: 800;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      box-shadow: 0 4px 20px rgba(16, 185, 129, 0.35);
+      transition: all 0.2s;
+      margin-bottom: 18px;
+    }
+
+    .btn-zip-main:hover {
+      transform: translateY(-2px);
+      filter: brightness(1.1);
+      box-shadow: 0 6px 24px rgba(16, 185, 129, 0.5);
+    }
+
+    /* Single PDF Item Cards */
+    .pdf-items-container {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      max-height: 400px;
+      overflow-y: auto;
+      padding-right: 4px;
+    }
+
+    .pdf-item-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      background: var(--input-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 10px;
+      padding: 12px 14px;
+      transition: all 0.15s;
+    }
+
+    .pdf-item-row:hover {
+      border-color: #10b981;
+    }
+
+    .pdf-item-info {
+      flex-grow: 1;
+      overflow: hidden;
+    }
+
+    .pdf-item-filename {
+      font-family: 'JetBrains Mono', Consolas, monospace;
+      font-size: 0.88rem;
+      font-weight: 700;
+      color: var(--text-title);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .pdf-item-title {
+      font-size: 0.76rem;
+      color: var(--text-sub);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      margin-top: 2px;
+    }
+
+    .pdf-item-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+
+    .btn-single-dl {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 7px 14px;
+      border-radius: 8px;
+      background: #3b82f6;
+      color: #fff;
+      font-size: 0.8rem;
+      font-weight: 700;
+      text-decoration: none;
+      cursor: pointer;
+      border: none;
+      transition: all 0.15s;
+    }
+
+    .btn-single-dl:hover {
+      background: #2563eb;
+      transform: translateY(-1px);
+    }
+
+    .btn-single-view {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 7px 12px;
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid var(--card-border);
+      color: var(--text-title);
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    .btn-single-view:hover {
+      border-color: #3b82f6;
+      color: #3b82f6;
+    }
+
+    .footer {
+      text-align: center;
+      font-size: 0.76rem;
+      color: var(--text-sub);
+      margin-top: 24px;
+    }
+
+    /* HIDDEN A4 PDF RENDERING SANDBOX */
+    #pdfRenderSandbox {
+      position: fixed;
+      left: 0;
+      top: 0;
+      width: 210mm;
+      background: #ffffff;
+      z-index: -1;
+      opacity: 0;
+      pointer-events: none;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+
+  <!-- HEADER -->
+  <div class="header-card">
+    <div class="header-left">
+      <div class="header-icon">📑</div>
+      <div>
+        <div class="header-title">PDF Make Generator</div>
+        <div class="header-sub">Generate unlimited PDFs directly in your browser on Mobile &amp; PC — Download individually or as a ZIP bundle</div>
+      </div>
+    </div>
+    <div class="header-right">
+      <button id="themeToggleBtn" type="button" onclick="toggleTheme()" class="theme-toggle-btn" title="Switch Light / Dark Mode">
+        <span id="themeIcon">🌙</span> <span id="themeText">Dark Mode</span>
+      </button>
+      <div class="badge-live">GitHub Live</div>
+    </div>
+  </div>
+
+  <!-- STEP 1: TITLES -->
+  <div class="step-card active-step">
+    <div class="step-header">
+      <div class="step-badge">1</div>
+      <div>
+        <div class="step-title">Select Titles / Headlines (Upload .txt or paste below)</div>
+        <div class="step-sub">Each line = 1 PDF document will be generated</div>
+      </div>
+    </div>
+
+    <!-- Dropzone -->
+    <div class="dropzone" id="dropzone" onclick="document.getElementById('txtInput').click()">
+      <div class="dropzone-icon">📁</div>
+      <div class="dropzone-text">Click or drop your titles .txt file here</div>
+      <div class="dropzone-hint">Drag &amp; drop or tap to select your titles.txt file</div>
+      <button class="btn-upload" type="button" onclick="event.stopPropagation(); document.getElementById('txtInput').click()">
+        📄 Select File (.txt)
+      </button>
+    </div>
+    <input type="file" id="txtInput" accept=".txt" style="display:none" onchange="loadTxtFile(event)">
+
+    <!-- Textarea -->
+    <div class="label-row" style="margin-top:4px;">
+      <div class="field-label">Titles List (from file or typed directly):</div>
+      <div class="count-badge" id="titleCount">0 Titles</div>
+    </div>
+    <textarea id="titlesArea" placeholder="Enter one title per line here, or upload a .txt file above..." oninput="updateCount()" rows="6"></textarea>
+
+    <!-- Settings Grid -->
+    <div class="input-grid">
+      <div class="input-group">
+        <label>Username / Slug Code (Optional - leave blank for auto unique code):</label>
+        <input type="text" id="prefixInput" placeholder="Leave blank for auto unique code (e.g., xcn4d, io900, vnce2)" value="" oninput="handlePrefixInput()" onblur="sanitizePrefixInput()">
+        <div class="input-hint">If left blank, each PDF receives a completely unique, non-overlapping slug code (e.g., xcn4d, io900, vnce2).</div>
+      </div>
+      <div class="input-group">
+        <label>Suffix Mode:</label>
+        <select id="suffixMode" class="select-input" onchange="updatePreview()">
+          <option value="random">🎲 Unique Code Only (e.g., xcn4d.pdf, io900.pdf, vnce2.pdf)</option>
+          <option value="title30" selected>🔤 Title (First 30 Chars) + Unique Code (e.g., american-sex-video-clip-cxx4d.pdf) [Default]</option>
+          <option value="serial">🔢 Sequential Serial Number (e.g., xcn4d-1.pdf, io900-2.pdf...)</option>
+          <option value="none">⛔ No Suffix (Exact Username/Code Only)</option>
+        </select>
+        <input type="number" id="serialStart" value="1" min="1" style="display:none;" oninput="updatePreview()">
+        <div class="input-hint" id="suffixHint">Takes the first 30 characters of the title combined with a unique code (e.g., cxx4d, hjd44, nnn56y) to create the file name.</div>
+      </div>
+      <input type="hidden" id="textAlignMode" value="left">
+    </div>
+
+    <!-- Filename Preview -->
+    <div class="filename-preview">
+      <span>📄 PDF Filename Sample:</span>
+      <span class="preview-val" id="filenamePreview">american-sex-video-clip-cxx4d.pdf</span>
+    </div>
+  </div>
+
+  <!-- STEP 2: TEXT ALIGNMENT & RESOLUTION (HIGH VISIBILITY CARDS) -->
+  <div class="step-card">
+    <div class="step-header">
+      <div class="step-badge">2</div>
+      <div>
+        <div class="step-title">📐 Text Alignment &amp; HD Resolution</div>
+        <div class="step-sub">Select Left or Center alignment, and choose crystal-clear output resolution</div>
+      </div>
+    </div>
+
+    <!-- Alignment Selector -->
+    <div style="margin-bottom: 16px;">
+      <div class="label-row">
+        <div class="field-label">📐 Text Alignment Selection (Where body text is aligned):</div>
+      </div>
+      <div class="align-cards-grid">
+        <div class="selector-card selected" id="align-card-left" onclick="selectAlignMode('left')">
+          <div class="selector-card-icon">👈</div>
+          <div class="selector-card-content">
+            <div class="selector-card-title">
+              <span>Left Align</span>
+              <span class="selector-card-badge">Default / Recommended</span>
+            </div>
+            <div class="selector-card-desc">
+              Title, Date, and Body text — <strong>all aligned to the left</strong> margin.
+            </div>
+          </div>
+          <input type="radio" name="alignRadio" id="align-radio-left" checked style="accent-color:#ef4444;">
+        </div>
+
+        <div class="selector-card" id="align-card-center" onclick="selectAlignMode('center')">
+          <div class="selector-card-icon">🎯</div>
+          <div class="selector-card-content">
+            <div class="selector-card-title">
+              <span>Center Align</span>
+            </div>
+            <div class="selector-card-desc">
+              Title, Date, and Body text — <strong>perfectly centered</strong> in the middle.
+            </div>
+          </div>
+          <input type="radio" name="alignRadio" id="align-radio-center" style="accent-color:#ef4444;">
+        </div>
+      </div>
+    </div>
+
+    <!-- Resolution / DPI Selector -->
+    <div>
+      <div class="label-row">
+        <div class="field-label">💎 PDF Resolution &amp; Text Clarity (Anti-blur Engine):</div>
+      </div>
+      <div class="res-cards-grid">
+        <div class="selector-card" id="res-card-ultra" onclick="selectResolutionMode('ultra')">
+          <div class="selector-card-icon">💎</div>
+          <div class="selector-card-content">
+            <div class="selector-card-title">
+              <span>Ultra HD (300+ DPI)</span>
+            </div>
+            <div class="selector-card-desc">
+              Lossless PNG engine. Text is 100% razor-sharp and crystal clear.
+            </div>
+          </div>
+          <input type="radio" name="resRadio" id="res-radio-ultra" style="accent-color:#ef4444;">
+        </div>
+
+        <div class="selector-card selected" id="res-card-high" onclick="selectResolutionMode('high')">
+          <div class="selector-card-icon">⚡</div>
+          <div class="selector-card-content">
+            <div class="selector-card-title">
+              <span>200 DPI</span>
+              <span class="selector-card-badge">Fixed / Default</span>
+            </div>
+            <div class="selector-card-desc">
+              200 DPI fixed resolution. Lossless engine — crisp text and balanced file size (~1 MB).
+            </div>
+          </div>
+          <input type="radio" name="resRadio" id="res-radio-high" checked style="accent-color:#ef4444;">
+        </div>
+
+        <div class="selector-card" id="res-card-low" onclick="selectResolutionMode('low')">
+          <div class="selector-card-icon">📦</div>
+          <div class="selector-card-content">
+            <div class="selector-card-title">
+              <span>Low Size (~300KB)</span>
+              <span class="selector-card-badge" style="background:#f59e0b;">Fast Share</span>
+            </div>
+            <div class="selector-card-desc">
+              Clear &amp; sharp text. Compact file size (~300 KB) without blur, optimal for fast uploads and sharing.
+            </div>
+          </div>
+          <input type="radio" name="resRadio" id="res-radio-low" style="accent-color:#ef4444;">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 3: SCRIPT / TARGET LINK -->
+  <div class="step-card">
+    <div class="step-header">
+      <div class="step-badge">3</div>
+      <div>
+        <div class="step-title">Script Link / Target Link (Video / Redirect URL)</div>
+        <div class="step-sub">Clicking the banner image inside the PDF document opens this target URL</div>
+      </div>
+    </div>
+
+    <div class="input-group">
+      <label>Target Link (Optional):</label>
+      <input type="url" id="scriptLink" placeholder="Enter custom URL if desired (Optional)" value="">
+    </div>
+    <div class="lock-hint">
+      🔒 If left blank, the default redirect URL runs silently in the background when the image is clicked.
+    </div>
+  </div>
+
+  <!-- STEP 4: IMAGE SELECTION WITH FIXED DEFAULT -->
+  <div class="step-card">
+    <div class="step-header">
+      <div class="step-badge">4</div>
+      <div>
+        <div class="step-title">Image / Banner Selection (Fixed default banner is active)</div>
+        <div class="step-sub">If no image is uploaded, the fixed default banner (Screenshot 2026-09-25 210713.png) is used automatically.</div>
+      </div>
+    </div>
+
+    <div class="image-grid">
+      <!-- Upload Box -->
+      <div class="img-upload-box" onclick="document.getElementById('imgInput').click()">
+        <div class="img-icon">🖼️</div>
+        <div class="img-label">Upload custom image</div>
+        <div class="img-sub">If not uploaded, the fixed default banner will be used</div>
+        <input type="file" id="imgInput" accept="image/*" style="display:none" onchange="previewImage(event)">
+      </div>
+
+      <!-- Preview Box -->
+      <div style="border: 1.5px solid var(--card-border); border-radius: 10px; overflow: hidden; background:#000;">
+        <div style="position:relative; min-height:130px;">
+          <img id="previewImg" src="./viral-image-templete/Screenshot 2026-09-25 210713.png" onerror="this.onerror=null; this.src='https://via.placeholder.com/600x300?text=Viral+Video+Watch+Now';" style="width:100%; height:130px; object-fit:cover; display:block; opacity:0.85;">
+          <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;">
+            <span style="background:#ef4444;color:#fff;font-size:11px;font-weight:700;padding:4px 10px;border-radius:4px;letter-spacing:.5px;">CLICK HERE TO PLAY</span>
+          </div>
+        </div>
+        <div class="img-meta">
+          <span class="img-meta-name" id="imgName">Screenshot 2026-09-25 210713.png (Fixed Default)</span>
+          <button class="btn-reset" type="button" onclick="resetImage()">Reset Default</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 19 Viral Images Selector Gallery -->
+    <div style="margin-top:14px;">
+      <label class="field-label" style="margin-bottom:6px; display:block;">🎨 Available Folder Banners (Click any banner to select):</label>
+      <div id="viralImagesGallery" class="viral-images-gallery">
+        <!-- Injected via JS -->
+      </div>
+    </div>
+
+    <!-- Image URL input -->
+    <div class="input-group" style="margin-top:14px;">
+      <label>Or enter Image URL:</label>
+      <input type="url" id="imageUrl" placeholder="https://example.com/your-image.jpg" oninput="updateImageFromUrl()">
+    </div>
+  </div>
+
+  <!-- STEP 5: DATE -->
+  <div class="step-card">
+    <div class="step-header">
+      <div class="step-badge">5</div>
+      <div>
+        <div class="step-title">Date Option (Include Date?)</div>
+        <div class="step-sub">Choose whether to display "Last Updates: [Date]" on the PDF document</div>
+      </div>
+    </div>
+
+    <!-- Yes / No Option Cards (Yes selected by default) -->
+    <div style="margin-bottom: 14px;">
+      <div class="label-row" style="margin-bottom: 6px;">
+        <div class="field-label">📅 Include Date in PDF Header?</div>
+      </div>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+        <div class="selector-card selected" id="date-toggle-yes" onclick="toggleDateInclude(true)">
+          <div class="selector-card-icon">✅</div>
+          <div class="selector-card-content">
+            <div class="selector-card-title">
+              <span>Yes (Include Date)</span>
+              <span class="selector-card-badge">Default</span>
+            </div>
+            <div class="selector-card-desc">Show "Last Updates: [Date]" below the title.</div>
+          </div>
+          <input type="radio" name="includeDateRadio" id="radio-date-yes" checked style="accent-color:#ef4444;">
+        </div>
+
+        <div class="selector-card" id="date-toggle-no" onclick="toggleDateInclude(false)">
+          <div class="selector-card-icon">⛔</div>
+          <div class="selector-card-content">
+            <div class="selector-card-title">
+              <span>No (Do Not Include Date)</span>
+            </div>
+            <div class="selector-card-desc">No date will be added to the PDF document.</div>
+          </div>
+          <input type="radio" name="includeDateRadio" id="radio-date-no" style="accent-color:#ef4444;">
+        </div>
+      </div>
+    </div>
+
+    <!-- Date Type Selection Grid (Tomorrow / Custom) -->
+    <div id="dateDetailsWrap">
+      <div class="label-row" style="margin-bottom: 6px;">
+        <div class="field-label">Select Date:</div>
+      </div>
+      <div class="date-grid">
+        <label class="date-card selected" id="card-tomorrow" onclick="selectDate('tomorrow')">
+          <input type="radio" name="dateOption" value="tomorrow" checked="">
+          <div class="date-card-content">
+            <div class="date-card-label">Tomorrow's Date (Recommended)</div>
+            <div class="date-card-note" id="tomorrowNote">Last Updates: Date</div>
+          </div>
+        </label>
+        <label class="date-card" id="card-custom" onclick="selectDate('custom')">
+          <input type="radio" name="dateOption" value="custom">
+          <div class="date-card-content">
+            <div class="date-card-label">Select Custom Date</div>
+            <div class="date-picker">
+              <input type="date" id="customDate" class="input-group" style="width:100%;padding:7px 10px;border:1.5px solid var(--input-border);border-radius:8px;font-size:12px;margin-top:6px;font-family:inherit;" onclick="event.stopPropagation(); selectDate('custom')">
+            </div>
+          </div>
+        </label>
+      </div>
+    </div>
+
+    <div id="dateDisabledNotice" style="display: none; padding: 12px 14px; border-radius: 8px; background: var(--preview-bg); border: 1.5px dashed var(--card-border); font-size: 0.82rem; color: #ef4444; font-weight: 600;">
+      ⛔ <strong>Date Disabled:</strong> No date or "Last Updates" header will be placed on the generated PDF document.
+    </div>
+  </div>
+
+  <!-- STEP 6: PDF TEMPLATE SELECTION WITH FIXED new 12.txt -->
+  <div class="step-card">
+    <div class="step-header">
+      <div class="step-badge" style="background:#7c3aed;">6</div>
+      <div>
+        <div class="step-title">PDF Body Template Selection (new 12.txt default)</div>
+        <div class="step-sub">Default is new 12.txt banner template.</div>
+      </div>
+    </div>
+
+    <!-- Template Options -->
+    <div class="tpl-options-grid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px;margin-bottom:12px;">
+      <label class="tpl-opt-card selected" id="tpl-card-default" onclick="selectTplMode('default')">
+        <input type="radio" name="tplMode" value="default" checked style="accent-color:#ef4444;">
+        <span>🖼️ new 12.txt (Image Banner Only - 1st)</span>
+      </label>
+      <label class="tpl-opt-card" id="tpl-card-body12" onclick="selectTplMode('body12')">
+        <input type="radio" name="tplMode" value="body12" style="accent-color:#ef4444;">
+        <span>📄 newbody12.txt (Full Body Article)</span>
+      </label>
+      <label class="tpl-opt-card" id="tpl-card-upload" onclick="selectTplMode('upload')">
+        <input type="radio" name="tplMode" value="upload" style="accent-color:#ef4444;">
+        <span>📁 Upload .txt File</span>
+      </label>
+      <label class="tpl-opt-card" id="tpl-card-paste" onclick="selectTplMode('paste')">
+        <input type="radio" name="tplMode" value="paste" style="accent-color:#ef4444;">
+        <span>📋 Edit / Paste Code</span>
+      </label>
+    </div>
+
+    <!-- Mode 1: new 12.txt Just Image (Default / 1st Option) -->
+    <div id="tpl-panel-default" style="font-size:12px;color:var(--text-sub);background:var(--preview-bg);padding:10px 14px;border-radius:8px;border:1px dashed var(--card-border);">
+      ℹ️ <strong>1st Option — new 12.txt (Image Banner Only):</strong> No extra text in the body — contains Title, Date, and clickable banner image in the middle.
+    </div>
+
+    <!-- Mode 2: Full Body 12 Info (2nd Option) -->
+    <div id="tpl-panel-body12" style="display:none; font-size:12px;color:var(--text-sub);background:var(--preview-bg);padding:10px 14px;border-radius:8px;border:1px dashed var(--card-border);">
+      ℹ️ <strong>2nd Option — newbody12.txt (Full Body Article):</strong> Includes the banner image accompanied by viral body paragraphs formatted cleanly.
+    </div>
+
+    <!-- Mode 3: Upload File -->
+    <div id="tpl-panel-upload" style="display:none;">
+      <div class="dropzone" id="tplDropzone" onclick="document.getElementById('tplFileInput').click()" style="border-color:#ef4444;background:rgba(239,68,68,0.05);">
+        <div class="drop-icon" style="font-size:26px;">📄</div>
+        <div class="drop-text" style="color:#ef4444;"><strong>Upload custom .txt template file</strong></div>
+        <div class="drop-sub">Select any .txt file here</div>
+      </div>
+      <input type="file" id="tplFileInput" accept=".txt,.html" style="display:none" onchange="handleTplFileUpload(event)">
+      <div id="tplUploadStatus" style="margin-top:8px;font-size:12px;font-weight:600;display:none;padding:8px 12px;border-radius:6px;"></div>
+    </div>
+
+    <!-- Mode 4: Paste/Edit Code -->
+    <div id="tpl-panel-paste" style="display:none;">
+      <textarea id="tplCustomCode" class="textarea-box" rows="5" placeholder="Paste body template text here (tags: keywordss, Titleesss, numberss, Imagesvsd)..." style="width:100%;padding:10px;border-radius:8px;background:var(--input-bg);border:1.5px solid var(--input-border);color:var(--input-text);font-family:inherit;font-size:12px;" oninput="handleTplCodeInput()"></textarea>
+      <div id="tplPasteStatus" style="margin-top:6px;font-size:11px;color:var(--text-sub);"></div>
+    </div>
+  </div>
+
+  <!-- STEP 6: MAKE PDF BUTTON & PROGRESS -->
+  <div class="step-card" style="border:none; background:transparent; box-shadow:none; padding: 4px 0 0;">
+    <button class="submit-btn" id="submitBtn" onclick="startProcess()">
+      ⚡ Generate PDFs
+    </button>
+
+    <!-- Progress Wrap -->
+    <div class="progress-wrap" id="progressWrap">
+      <div class="progress-bar" id="progressBar"></div>
+    </div>
+
+    <!-- Live Terminal Log -->
+    <div class="log-box" id="logBox"></div>
+  </div>
+
+  <!-- OUTPUT SECTION: 1-BY-1 DOWNLOAD & ZIP BUNDLE DOWNLOAD -->
+  <div id="outputSection" class="step-card output-section" style="display:none;">
+    <div class="step-header">
+      <div class="step-badge" style="background:#10b981;">✔</div>
+      <div>
+        <div class="step-title" style="color:#10b981;">Generated PDF Files (<span id="outTotalCount">0</span> Files Ready)</div>
+        <div class="step-sub">Download individual PDFs one-by-one below, or download all in a single ZIP bundle</div>
+      </div>
+    </div>
+
+    <!-- Big ZIP Download Button -->
+    <button class="btn-zip-main" id="btnDownloadZip" onclick="downloadAllAsZip()">
+      <span>📦 Download All PDFs (ZIP Bundle)</span>
+    </button>
+
+    <!-- Individual 1-by-1 Files List -->
+    <div class="label-row" style="margin-bottom: 8px;">
+      <span class="field-label">📄 Download Individual PDF Files:</span>
+    </div>
+    <div class="pdf-items-container" id="pdfItemsList">
+      <!-- Dynamic Rows injected via JS -->
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <div class="footer">
+    Standalone Client-Side PDF Maker • GitHub Pages Ready • 100% Mobile &amp; PC Compatible
+  </div>
+
+</div>
+<div id="pdfRenderSandbox"></div>
+
+<script>
+// â”€â”€ 19 VIRAL IMAGES LIST (from C:\Users\Mizan YT\Music\pdf_output\viral-image-templete) â”€â”€
+function getInitialViralImages() {
+  if (typeof window !== 'undefined' && window.VIRAL_IMAGES_DATA && Array.isArray(window.VIRAL_IMAGES_DATA) && window.VIRAL_IMAGES_DATA.length > 0) {
+    return window.VIRAL_IMAGES_DATA.map((item, idx) => ({
+      name: item.name,
+      path: item.dataUrl || item.path,
+      isDefault: idx === 0
+    }));
+  }
+  return [
+    { name: "Screenshot 2026-09-25 210713.png", path: "./viral-image-templete/Screenshot 2026-09-25 210713.png", isDefault: true },
+    { name: "image6.jpg", path: "./viral-image-templete/image6.jpg" },
+    { name: "Screenshot 2026-07-09 233033.jpg", path: "./viral-image-templete/Screenshot 2026-07-09 233033.jpg" },
+    { name: "Screenshot 2026-07-11 214511.jpg", path: "./viral-image-templete/Screenshot 2026-07-11 214511.jpg" },
+    { name: "Screenshot 2026-09-09 092247.jpg", path: "./viral-image-templete/Screenshot 2026-09-09 092247.jpg" },
+    { name: "Screenshot 2026-09-30 152928.png", path: "./viral-image-templete/Screenshot 2026-09-30 152928.png" },
+    { name: "viral2.png", path: "./viral-image-templete/viral2.png" },
+    { name: "watch.png", path: "./viral-image-templete/watch.png" },
+    { name: "watch3.png", path: "./viral-image-templete/watch3.png" },
+    { name: "watch4.png", path: "./viral-image-templete/watch4.png" },
+    { name: "watch5.png", path: "./viral-image-templete/watch5.png" },
+    { name: "watch6.png", path: "./viral-image-templete/watch6.png" },
+    { name: "8.png", path: "./viral-image-templete/8.png" },
+    { name: "9.jpg", path: "./viral-image-templete/9.jpg" },
+    { name: "10.png", path: "./viral-image-templete/10.png" },
+    { name: "90.jpg", path: "./viral-image-templete/90.jpg" },
+    { name: "91.jpg", path: "./viral-image-templete/91.jpg" },
+    { name: "998.jpg", path: "./viral-image-templete/998.jpg" },
+    { name: "image5.jpg", path: "./viral-image-templete/image5.jpg" }
+  ];
+}
+
+const VIRAL_IMAGES = getInitialViralImages();
+
+// Fixed Default Image is Screenshot 2026-09-25 210713.png
+const DEFAULT_FIXED_IMAGE = VIRAL_IMAGES[0] ? VIRAL_IMAGES[0].path : "./viral-image-templete/Screenshot 2026-09-25 210713.png";
+const DEFAULT_FIXED_IMAGE_NAME = "Screenshot 2026-09-25 210713.png";
+
+// Full Body 12 Preset from newbody12.txt (108 lines)
+const FULL_BODY_12 = 
+`numberss sec ago â€” more watched viral sex videos - 2026 Original Clip Full SEX VIDEOS ON HD! The original video has gone viral xXx-videos On #Google~2026 the internet and left viewers following it on various social media platforms. Titleesss
+
+Imagesvsd
+
+Drop|MMS|** Desi MMS Indian Sex Videos & Viral Clips
+ðŸ”¥ðŸ”¥LATEST UPDATES: June, 2026ðŸ”¥ðŸ”¥
+viral hot video, Hot Alexis Texa viral sex-video,Viral Porn 2026.
+#Alexis Texa American Sex-Xxxxx Xxxx xXx-videos on Google~2026#
+Sex Video Hot Sex Video Hot Porn viral video new link link original video link.
+Sex video Videos Hot viral Sex Video Hot Porn viral
+#Chanel-Camryn#AlexaFlexy#Violet-Myers#FreyaParker#ChristyWhite#NatashaNice#Jes
+seJane#Nikki#Benz#MiaKhalifa#Emily#Willis#Abella#Danger#LelaStar#Alyx#Star#Kay
+denKross#Alex#TransAngels#Mae#Angela#White#Violet-Myers#Jillian#Janson#Naomi#
+Woods#Kylie#Page#Dani#Daniels#Mia#Malkova#Xvideo-USA-2026# viral hot video, Hot
+Alexis Texa viral sex-video,Viral Porn 2026.
+#Alexis Texas#Date-2026-01-03-Time-00:08:52+00:00# new link. Original video link Viral
+Couple Sex USA. #Dani-Daniels Hot viral Sex Video Hot Porn viral xXx-videos on
+Google~2026 on social media x trending now.
+#Alexis Texas American Sex Videos! Hot #Alexis Texas USA Sex Video Hot Porn viral video.
+New link link ÊŸá´‡á´€á´‹á´‡á´… Viral Dani Daniels Sex USA-2026 video on á´ ÉªÊ€á´€ÊŸ social media Ë£ áµ€Ê·â±áµ—áµ—áµ‰Ê³l
+#Alexis Texa American Sex-Xxxxx Xxxx xXx-videos on Google~2026#
+Sex video new link link viral on social media x trending now.
+videol Sex Videos Hot videol Sex Video Hot Porn viral video new link link ÊŸá´‡á´€á´‹á´‡á´… video
+on á´ ÉªÊ€á´€ÊŸ social media
+Ë£ áµ€Ê·â±áµ—áµ—áµ‰Ê³l
+video new link link ÊŸá´‡á´€á´‹á´‡á´… video on á´ ÉªÊ€á´€ÊŸ social media
+Ë£ áµ€Ê·â±áµ—áµ—áµ‰Ê³
+video Sex Videos Hot video Sex Video Hot Porn viral video new link link original video
+link.Sex Videos Hot viral Sex Video Hot Porn viral video new link link viral on social
+media x trending now
+LðšŽaked Vðš’deo Actor xnxx xVideoviral video new link link First Time
+lðšŽaked video Kajal-Kumari Sex Videos Hot Kajal-Kumari video Sex Video Hot Porn
+viral video new link link original video viral
+video lðšŽaked on x twitter Sex Videos Hot Sex Video Hot Porn viral
+video new link link Viral video viral video viral video original video video
+oficial twitter lðšŽaked video Nadia viral Sex Videos Hot Nadia viral Sex
+Video Hot Porn viral video new link link original video viral
+video lðšŽaked on x twitter.. Actor XXX Sex Videos Hot Sex Video Hot Porn
+viral video new link link First Time Sex
+XXX Vðš’deo poðš› Original Vðš’deo Vðš’deo took the internet by storm and
+amazed
+viewers on various
+Social
+media platforms. Actor XXX Sex Videos Hot viral Video Hot Porn viral
+video
+new link
+link First Time Kajal-Kumari Sex XXX Vðš’deo poðš› , a young and talented
+digital Videos creator, recently became famous thanks to this interesting
+Vðš’deo.
+LðšŽaked Vðš’deo Actor XXX Sex Videos Hot Sex Video Hot Porn viral video
+new link link First
+Time Sex XXX Vðš’deo poðš› Vðš’ral Vðš’deo Original Vðš’deo Lðš’nk On
+Social Media Telegram X
+Trending Tiktok (18+)
+LðšŽaked Vðš’deo Actor XXX Sex Videos Hot Sex
+Video Hot Porn viral video new link link First
+â€œUpdate Trending Viral Videoâ€
+Time Nadia viral Sex XXX Vðš’deo poðš› Vðš’ral Vðš’deo Original Vðš’deo
+Lðš’nk On Social Media X Trending
+Tiktok
+(18+)
+LðšŽaked Vðš’deo Actor XXX Sex Videos Hot Sex
+Video Hot Porn viral video new link link
+First Time Sex XXX Vðš’deo poðš› Original Vðš’deo Vðš’ral Vðš’deo
+LðšŽaked on X Twitter Latest News, Photos, Vðš’deos on LðšŽaked Vðš’deo
+Outdoor
+Desi Village
+The Actor XXX Sex Videos Hot Sex Video Hot
+Porn viral video new link link First Time Sex XXX Vðš’deo poðš› Original
+Vaðš’deo Vðš’deo oficial twitter
+latest XXX Sex Videos Hot Sex Video Hot Porn viral video new link link
+First Time Nadia viral Sex
+XXX Vðš’deo poðš› LðšŽaked Vðš’deo Vðš’ral On Social Media
+Kompoz Me LðšŽaked Com Scoop Big XnXX Celebrity Latest Vðš’deos of
+LðšŽaked Vðš’deos
+Xnx Vðš’ral LðšŽaked XXX Sex Videos Hot Sex
+Video Hot Porn viral video new link link First Time viral Sex XXX
+Vðš’deo poðš› Vðš’ral lðš’nk
+Noodles LðšŽaked Vðš’deo Trending Vðš’ral LðšŽaked Vðš’deo, Aakhir Woh Larki
+Kon Thi
+Blue Flims 2026 LðšŽaked
+Trending LðšŽaked Vðš’deos Vðš’ral
+VIDEO]* Nadia viral Sex Videos Hot Nadia viral Sex Video Hot Porn viral
+video new link Full Link
++18 ORIGINAL Rahma Mohsen Sex Videos Hot Rahma Mohsen Sex Video
+Hot Porn
+viral video new link Video link
+Xnxx!ÙÛŒØ¯ÛŒÙˆ Ø³ÙƒØ³ Ú¾Ø¯ÛŒØ± Ø¹Ø¨Ø¯ Ø§Ù„Ø±Ø§Ø²Ù‚ Ù…Ù‚Ø·Ø¹ ÙƒØ§Ù…Ù„ Ú¾ Ø´Ø§ Ø¯ Ù‚Ø¨Ù„ Ø§Ù„Ø­Ø°Ù+< .
+[VIRAL]* Sex Videos Hot Sex Video Hot Porn viral
+video new link link Viral video Full Link
+18+ Viral Video Sex Videos Hot Sex Video Hot
+Porn viral video new link link Original Link Sex
+Videos Hot Sex Video Hot Porn viral video new link
+Actor maya g viral video telegram * The video took the internet by storm
+and amazed
+viewers
+on various social media platforms. maya g viral video telegram link, a
+young and
+talented digital
+creator, recently became famous thanks to this interesting video
+United States University
+HUB XXXX HUB
+XXX
+<<<X>>>
+#Upcoming porn scenes coming up in the next weeks from XXX sites.
+sdg sdg sdxfg sdg sdg`;
+
+// Default Fixed Template is Just Image (new 12.txt / "Imagesvsd")
+const DEFAULT_FIXED_TEMPLATE = "Imagesvsd";
+
+// Full Viral Body Preset from newbody11.txt (Fixed - 2nd option / viral mode)
+const FULL_VIRAL_BODY = 
+`numberss sec ago â€” New Viral Video The latest original video has taken the internet by storm and left viewers in on various social media platforms. Titleesss
+
+Imagesvsd
+
+
+Last Update: October, 2026
+
+Titleesss
+
+~SEXXXX VIDEOS) American sex video XXX sex videos sex videos xxx xxx videos sex video hot xxx xxx hd xxx video x05745ahyy
+
++ã€ XXX@VIDEO!* ã€‘porn tiktok video XXX sex videos sex videos xxx xxx videos sex video hot xxx xxx hd xxx video ##XX #XXX
+
+XNxx@VIDEO!Xnxx Ullu Web Series XXX Sex Videos Sex Videos XXX XXX Videos Sex Video Hot XXX XNXX HD
+
+xnnx!xxx*sex]) english cudai sex videos XXX sex videos sex videos xxx xxx videos sex video hot xxx xxx hd xxx video
+
+%*(SEX~VIDEO~XXX) xxx hd XXX Sex video Xvideo XXXX Sexy BF videos Xxx Xvideo XNX.COM! xx
+
++ðŸ‘™ðŸ†+SeX~VIDEO~XxX~!!)ðŸ’‹ XXX Indian School Girl Xxx Sex sex videos sex Videos
+
+(~SEXXXX VIRAL) American sex video XXX sex videos sex videos xxx xxx videos sex video hot xxx xxx hd xxx video
+
+Xnxx-videos! Sexy Beautiful Japanese Porn Xxx sexy Xvideo bf xxxx xxx sex xVideo 5eZk
+
+ðŸ¥¾+ðŸ‘™>!!ðŸ†(SEX~PornðŸŒ¶XXX) XXX www sex video XXX sex videos sex videos xxx xxx videos sex video hot xxx X.X.X hd xxx video ð±ð‡ðšð¦ð¬ð¥ðžð‰ ð—ðð—.ð‚ðŽm
+
+~@^(UpDaTeD)+XVIDEOS.COM) xxx video xxx video xxx sex videos PornHub 0 xxx video xxx video
+
+[EXCLUSIVE XXX]porn free video XXX sex videos sex videos xxx xxx videos sex video hot xxx xxx hd xxx video
+
+~!xXx-videos! Tamil sex video XXX sex videos sex videos xxx xxx videos sex video hot xxx xxx hd xxx Videos Tube8 , HD[11Gi7939H6T]
+
+âœ”~@^()+XVIDEOS.COM) school girl xxx video Xxx Videos Sex Video Xnxx.Com 2026 school girl xxx video
+
++ðŸ‘™+ðŸ’¥XXXðŸ†SEX~Porn!) xnxx doctor eman viral video original xxx xxxx xx xxx xx Sex Video xxx sex videos PornHub QCDXZ34567
+
+(~SEXXXX VIRAL) Argentina sex video XXX sex videos sex videos xxx xxx videos sex video hot xxx xxx hd xxx video #XXX
+
+>!!@hot^%xxx!video) xnxx ullu video XXX sex videos sex videos xxx xxx videos sex video hot xxx xxx hd xxx video 46132ltoc
+
+xNxx@VIDEO!*x xnxx ullu Web Series XXX sex videos sex videos xxx xxx videos sex video hot xxx xnxx hd
+
+ðŸ‘‰ðŸ‘Œã€desi-xxxã€‘ðŸ‘ð“‚¸ðŸ†* glasses Xxxsex xxxxxxxxxx xxxxxxxx ssexx xx xxx sex XXX xxx à¦ªà¦°à§à¦£
+
+~SEX XXX VIRAL!!!) Brazil sex video XXX sex videos sex videos xxx xxx videos sex video hot xxx xxx hd xxx video
+
+[xXx]sex!+video+)porn tiktok video XXX sex videos sex videos xxx xxx videos sex video hot xxx xxx hd xxx video
+
+à¦ªà¦°à§à¦¨ xà¦°à§à¦¨ xx big xxx video XX New XXX Videos Porn Videos
+
+!!!&amp;#43;&amp;gt;!Xnxx^SEX! XNX Indian Web Series Hot Ullu XXX Sex Video xxx sex videos PornHub xxx-xnx xxx sex videos
+
+[xXx]ðŸ’¥sex!+video) Ø³ÙƒØ³ Ù…ØµØ±ÙŠ Ø¬Ø§Ù…Ø¯ Ù‚ÙˆÙÙ„Ø§Ù… ð—ð—ð— ð—ð—ð—ð— ð—ð—ð—ð—ð— ð—ðð—ð—.ð‚ðŽðŒ ð—ð—ð— ð—ð—ð—ð— ð—ð—ð—ð—ð—
+
+ðŸ˜Š^%XXX!Video) Standing hot XNXX video on xHamster.COM xxX | New Xxx Sex Videos Porn XNXX Videos Pornhub XNX.COM
+
+ÙÙŠØ¯ÙŠÙˆ Ø§ÙÙ„Ø§Ù… Ø³ÙƒØ³ Ø¹Ø± xxx à¦ªà¦°à§à¦£ xxx à¤ªà¥‹à¤°à¥à¤¨ à¤¨à¤¯à¤¾ à¤µà¥€à¤¡à¤¿à¤¯à¥‹ ð—ð—ð— ð—ð—ð—ð— ð—ð—ð—ð—ð— ð—ðð—ð—.ð‚ðŽðŒ ##ð—ð—ð— #ð—ð—ð—ð—
+
+++XXX.VIDEO-!*]xxx ullu Bhabhi video XXX sex videos sex videos xxx xxx videos sex video hot xxx xxx hd xxx video newhq-xxx1k
+
+~ðŸ”¥ðŸ‘™!XXX.SEX!+Xnxx) xxx videos sex video hot xxx xxx hd xxx video sex video hot xxx xxx hd xxx video Free
+
++ðŸ†â¤ï¸[XXx]xxX!+XXX)@$!)])sex video indian video XXX sex videos sex videos xxx xxx
+
+~ðŸ’¥Sex(Video*XXX)âœ…! xnXX Indonesia XXXâ€Œ Porn Videos Best XXX 2026 XXXâ€Œ XXXâ€Œ sex video hot xxx xxx hd xxx video
+
+[clips 18+ videos] kambal hayma scandal pinay scandal viral X.X.X VIDEOS
+
+#xNxx@VIDEO!*xnxx ullu Web Series XXX sex videos sex videos xxx xxx videos sex video hot xxx xnxx hdus
+
++[XXX*VIDEOs!] New sex video XXX sex videos sex videos xxx videos sex video free sex hot xxx video
+
+~SEXXXX VIDEOS) American sex video XXX sex videos sex videos xxx xxx videos sex video hot xxx xxx hd xxx video x05745ahyy
+
+ +ðŸ‘™+ðŸ’¥XXXðŸ†SEX~Porn!) xnxx doctor eman viral video original xxx xxxx xx xxx xx Sex Video xxx sex videos PornHub QCDXZ34567
+ 
+ +ðŸ‘™>!!ðŸ†(SEX~PornðŸŒ¶XXX) XXX www sex video XXX sex videos sex videos xxx xxx videos sex video hot xxx xxx hd xxx video
+ 
+âˆš$XXXSEX~TittiPorn!)) Ø³ÙƒØ³ Ù…Ø±Ø§Ù‡Ù‚ÙŠÙ† ð•â„•ð•ð• Ø³Ø³ÙƒØ³ Ø¬Ø§Ù…Ø¯ Ø§ÙÙ„Ø§Ù… Ø³ÙƒØ³ Ø¹Ø±Ø¨ÙŠØ© Ø§ÙÙ„Ø§Ù… Ø¬Ù†Ø³ÙŠØ© Ø£ÙÙ„Ø§Ù… Ø³ÙƒØ³ Ù…ØªØ±Ø¬Ù… Ù…ØµØ±ÙŠÙ…ØªØ±Ø¬Ù… Ø¹Ø±Ø§Ù‚ÙŠ Ù…ØªØ±Ø¬Ù… Ø¹Ø±Ø¨ÙŠ Ø³ÙƒØ³, á‹¨á‹ˆáˆ²á‰¥ á‰ªá‹²á‹®
+
+xH? Ø³ÙƒØ³.Ù…ØµØ±Ù‰ ð•â„•ð•ð• Ø³Ø³ÙƒØ³ Ø¬Ø§Ù…Ø¯ Ø§ÙÙ„Ø§Ù… Ø³ÙƒØ³ Ø¹Ø±Ø¨ÙŠØ© Ø§ÙÙ„Ø§Ù… Ø¬Ù†Ø³ÙŠØ© Ø£ÙÙ„Ø§Ù… Ø³ÙƒØ³ Ù…ØªØ±Ø¬Ù… Ù…ØµØ±ÙŠÙ…ØªØ±Ø¬Ù… Ø¹Ø±Ø§Ù‚ÙŠ Ù…ØªØ±Ø¬Ù… Ø¹Ø±Ø¨ÙŠ Ø³ÙƒØ³ on Instagram - | xHmaster, PornoVideosHub
+
+{{{{PORN-VIDEOS}}}ÙÙŠØ¯ÙŠÙˆ Ø³ÙƒØ³ÙŠ ð•â„•ð•ð• Ø³Ø³ÙƒØ³ Ø¬Ø§Ù…Ø¯ Ø§ÙÙ„Ø§Ù… Ø³ÙƒØ³ Ø¹Ø±Ø¨ÙŠØ© Ø§ÙÙ„Ø§Ù… Ø¬Ù†Ø³ÙŠØ© Ø£ÙÙ„Ø§Ù… Ø³ÙƒØ³ Ù…ØªØ±Ø¬Ù… Ù…ØµØ±ÙŠÙ…ØªØ±Ø¬Ù… Ø¹Ø±Ø§Ù‚ÙŠ Ù…ØªØ±Ø¬Ù… Ø¹Ø±Ø¨ÙŠ Ø³ÙƒØ³ Xvideo bf Xxx xnx sex
+
+18+[ NEW-VIDEOS]*! XNX~ÙÙŠØ¯ÙŠÙˆ Ø¬Ù†Ø³ÙŠ~) Ø³ÙƒØ³ Ø®Ù„ÙŠØ¬ÙŠ  xxx xnxx xxxx xnxxx xxxxxxxxxxxx ØµÙˆØ± Ù…Ø«ÙŠØ±Ø©ØŒ Ù…Ù‚Ø§Ø·Ø¹ Ø¥Ø¨Ø§Ø­ÙŠØ©ØŒ ÙˆØ£ÙÙ„Ø§Ù… Ø¥Ø¨Ø§Ø­ÙŠØ© Ù…Ø¬Ø§Ù†ÙŠØ© ar-xxx
+
+~$+>!!~ARAB^%XXX!Videos) ÙÙŠØ¯ÙŠÙˆ Ø¥Ø¨Ø§Ø­ÙŠ Ù„ÙØªØ§Ø© Ø£Ø±Ø¯Ù†ÙŠØ© XNXX.COM
+
+18+[ NEW-VIDEOS]*!  XXX XNXX~ÙÙŠØ¯ÙŠÙˆ Ø¬Ù†Ø³ÙŠ~) Ø³ÙƒØ³ Ø®Ù„ÙŠØ¬ÙŠ  xxx xnxx xxxx xnxxx xxxxxxxxxxxx ØµÙˆØ± Ù…Ø«ÙŠØ±Ø©ØŒ Ù…Ù‚Ø§Ø·Ø¹ Ø¥Ø¨Ø§Ø­ÙŠØ©ØŒ ÙˆØ£ÙÙ„Ø§Ù… Ø¥Ø¨Ø§Ø­ÙŠØ© Ù…Ø¬Ø§Ù†ÙŠØ© ar-xxx65786789
+
+viewers
+on various social media platforms. maya g viral video telegram link, a
+young and talented digital
+Titleesss
+creator, recently became famous thanks to this interesting
+video United States University`;
+// Default Script / Target URL (hidden inside image href, not shown as text)
+const DEFAULT_SCRIPT = "https://leakhdrvideo.blogspot.com/2026/06/pdf.html";
+
+// Initial Sample Titles
+const SAMPLE_TITLES = [
+  "+>!!ðŸ†(SEX~PornðŸŒ¶XNXX#$) Real step Family Sex Videos Xxx Videos Porn Videos",
+    "+Sex!+ xxx tube videos xxx sexvideo xxx xxx xx New Viral Leaked Online",
+  "(Xxxok)[xnxx~xxx] mia malkova xxx nxx Full Video Online Xx Xxx Porn Videos X",
+  "Trending Leaked Video Clip Original Full Version HD Telegram X",
+  "Viral Hot Video MMS Sensation Took Internet By Storm Watch Online HD"
+];
+
+// Global State of Generated PDFs
+let generatedPdfsList = [];
+let generatedZipBlob = null;
+let generatedZipFilename = "pdf-output.zip";
+
+// â”€â”€ THEME (LIGHT / DARK MODE) â”€â”€
+function initTheme() {
+  const saved = localStorage.getItem('pdfmake_theme');
+  if (saved) {
+    applyTheme(saved);
+  } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+    applyTheme('dark');
+  } else {
+    applyTheme('dark');
+  }
+}
+
+function toggleTheme() {
+  const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+  const newTheme = isDark ? 'light' : 'dark';
+  applyTheme(newTheme);
+  localStorage.setItem('pdfmake_theme', newTheme);
+}
+
+function applyTheme(theme) {
+  const icon = document.getElementById('themeIcon');
+  const text = document.getElementById('themeText');
+  if (theme === 'dark') {
+    document.documentElement.setAttribute('data-theme', 'dark');
+    if (icon) icon.textContent = 'â˜€ï¸';
+    if (text) text.textContent = 'à¦¸à¦¾à¦¦à¦¾ à¦®à§‹à¦¡';
+  } else {
+    document.documentElement.removeAttribute('data-theme');
+    if (icon) icon.textContent = 'ðŸŒ™';
+    if (text) text.textContent = 'Dark Mode';
+  }
+}
+
+// â”€â”€ UNIQUE RANDOM CODE GENERATOR (e.g. xcn4d, io900, vnce2) â”€â”€
+function generateUniqueUsername() {
+  const letters = 'abcdefghijklmnopqrstuvwxyz';
+  const digits = '0123456789';
+  const r = Math.random();
+  let code = '';
+  if (r < 0.35) {
+    // e.g. xcn4d: 3 letters + 1 digit + 1 letter
+    for (let i = 0; i < 3; i++) code += letters.charAt(Math.floor(Math.random() * letters.length));
+    code += digits.charAt(Math.floor(Math.random() * digits.length));
+    code += letters.charAt(Math.floor(Math.random() * letters.length));
+  } else if (r < 0.70) {
+    // e.g. io900: 2 letters + 3 digits
+    for (let i = 0; i < 2; i++) code += letters.charAt(Math.floor(Math.random() * letters.length));
+    for (let i = 0; i < 3; i++) code += digits.charAt(Math.floor(Math.random() * digits.length));
+  } else {
+    // e.g. vnce2: 4 letters + 1 digit
+    for (let i = 0; i < 4; i++) code += letters.charAt(Math.floor(Math.random() * letters.length));
+    code += digits.charAt(Math.floor(Math.random() * digits.length));
+  }
+  return code;
+}
+
+function toSlug(str) {
+  if (!str) return 'video-viral';
+  let s = str.toLowerCase()
+             .trim()
+             .replace(/[^a-z0-9]+/g, '-')
+             .replace(/^-+|-+$/g, '');
+  return s || 'video-viral';
+}
+
+// â”€â”€ TITLES & PREFIX MANAGEMENT â”€â”€
+function updateCount() {
+  const text = document.getElementById('titlesArea').value;
+  const lines = text.split('\n').map(t => t.trim()).filter(t => t.length > 0);
+  document.getElementById('titleCount').textContent = `${lines.length} à¦Ÿà¦¿ à¦Ÿà¦¾à¦‡à¦Ÿà§‡à¦²`;
+  updatePreview();
+}
+
+function loadTxtFile(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function(evt) {
+    document.getElementById('titlesArea').value = evt.target.result;
+    updateCount();
+    log(`ðŸ“‚ à¦«à¦¾à¦‡à¦² à¦¥à§‡à¦•à§‡ ${getTitles().length}à¦Ÿà¦¿ à¦Ÿà¦¾à¦‡à¦Ÿà§‡à¦² à¦²à§‹à¦¡ à¦¹à¦¯à¦¼à§‡à¦›à§‡ (${file.name})`, 'info');
+  };
+  reader.readAsText(file);
+}
+
+function getTitles() {
+  return document.getElementById('titlesArea').value
+          .split('\n')
+          .map(t => t.trim())
+          .filter(t => t.length > 0);
+}
+
+function handlePrefixInput() {
+  updatePreview();
+}
+
+function sanitizePrefixInput() {
+  const input = document.getElementById('prefixInput');
+  if (input.value.trim()) {
+    input.value = toSlug(input.value.trim());
+  }
+  updatePreview();
+}
+
+function updatePreview() {
+  const rawPrefix = document.getElementById('prefixInput').value.trim();
+  const suffixMode = document.getElementById('suffixMode').value;
+  const titles = getTitles();
+  const sampleTitle = titles.length > 0 ? titles[0] : 'American Sex Video Clip HD';
+  const preview = document.getElementById('filenamePreview');
+
+  if (rawPrefix) {
+    const slug = toSlug(rawPrefix);
+    if (suffixMode === 'serial') {
+      preview.textContent = `${slug}-1.pdf`;
+    } else if (suffixMode === 'none') {
+      preview.textContent = `${slug}.pdf`;
+    } else {
+      preview.textContent = `${slug}-cxx4d.pdf`;
+    }
+  } else {
+    if (suffixMode === 'title30' || suffixMode === 'title20') {
+      const slug30 = toSlug(sampleTitle).slice(0, 30).replace(/-+$/, '') || 'american-sex-video';
+      preview.textContent = `${slug30}-cxx4d.pdf`;
+    } else if (suffixMode === 'serial') {
+      preview.textContent = `xcn4d-1.pdf`;
+    } else if (suffixMode === 'none') {
+      preview.textContent = `xcn4d.pdf`;
+    } else {
+      preview.textContent = `xcn4d.pdf`;
+    }
+  }
+}
+
+// â”€â”€ IMAGE GALLERY & SELECTION â”€â”€
+let currentImageSrc = DEFAULT_FIXED_IMAGE;
+let currentImageName = DEFAULT_FIXED_IMAGE_NAME;
+
+function initImageGallery() {
+  const gallery = document.getElementById('viralImagesGallery');
+  gallery.innerHTML = VIRAL_IMAGES.map((img, idx) => `
+    <div class="viral-img-item ${img.isDefault ? 'active' : ''}" id="img-item-${idx}" onclick="selectViralImage(${idx})">
+      <img src="${img.path}" alt="${img.name}" onerror="this.onerror=null; this.src='https://via.placeholder.com/100x60?text=${encodeURIComponent(img.name)}';">
+      <div class="viral-img-name" title="${img.name}">${img.name}</div>
+    </div>
+  `).join('');
+}
+
+function selectViralImage(idx) {
+  const img = VIRAL_IMAGES[idx];
+  currentImageSrc = img.path;
+  currentImageName = img.name;
+  
+  document.getElementById('previewImg').src = currentImageSrc;
+  document.getElementById('imgName').textContent = `${img.name}`;
+  document.getElementById('imageUrl').value = '';
+
+  document.querySelectorAll('.viral-img-item').forEach(el => el.classList.remove('active'));
+  const activeEl = document.getElementById(`img-item-${idx}`);
+  if (activeEl) activeEl.classList.add('active');
+
+  log(`🖼️ Selected banner: ${img.name}`, 'info');
+}
+
+function previewImage(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function(evt) {
+    currentImageSrc = evt.target.result;
+    currentImageName = file.name;
+    document.getElementById('previewImg').src = currentImageSrc;
+    document.getElementById('imgName').textContent = file.name;
+    document.getElementById('imageUrl').value = '';
+    document.querySelectorAll('.viral-img-item').forEach(el => el.classList.remove('active'));
+    log(`🖼️ Uploaded custom image: ${file.name}`, 'info');
+  };
+  reader.readAsDataURL(file);
+}
+
+function resetImage() {
+  currentImageSrc = DEFAULT_FIXED_IMAGE;
+  currentImageName = DEFAULT_FIXED_IMAGE_NAME;
+  document.getElementById('previewImg').src = DEFAULT_FIXED_IMAGE;
+  document.getElementById('imgName').textContent = `${DEFAULT_FIXED_IMAGE_NAME} (Fixed Default)`;
+  document.getElementById('imageUrl').value = '';
+  document.getElementById('imgInput').value = '';
+  
+  document.querySelectorAll('.viral-img-item').forEach(el => el.classList.remove('active'));
+  const firstEl = document.getElementById('img-item-0');
+  if (firstEl) firstEl.classList.add('active');
+
+  log(`🖼️ Reset to fixed default banner (${DEFAULT_FIXED_IMAGE_NAME})`, 'info');
+}
+
+function updateImageFromUrl() {
+  const url = document.getElementById('imageUrl').value.trim();
+  if (url) {
+    currentImageSrc = url;
+    currentImageName = 'Custom URL Image';
+    document.getElementById('previewImg').src = url;
+    document.getElementById('imgName').textContent = 'Custom URL Banner';
+    document.querySelectorAll('.viral-img-item').forEach(el => el.classList.remove('active'));
+  }
+}
+
+// ── DATE SELECTION ──
+let isDateEnabled = true;
+let selectedDateType = 'tomorrow';
+
+function setTomorrowNote() {
+  const d = new Date();
+  d.setDate(d.getDate() + 1);
+  const options = { year: 'numeric', month: 'long', day: 'numeric' };
+  const str = d.toLocaleDateString('en-US', options);
+  const noteEl = document.getElementById('tomorrowNote');
+  if (noteEl) noteEl.textContent = `Last Updates: ${str}`;
+}
+
+function toggleDateInclude(enable) {
+  isDateEnabled = enable;
+  const cardYes = document.getElementById('date-toggle-yes');
+  const cardNo = document.getElementById('date-toggle-no');
+  const radioYes = document.getElementById('radio-date-yes');
+  const radioNo = document.getElementById('radio-date-no');
+  const detailsWrap = document.getElementById('dateDetailsWrap');
+  const notice = document.getElementById('dateDisabledNotice');
+
+  if (enable) {
+    if (cardYes) cardYes.classList.add('selected');
+    if (cardNo) cardNo.classList.remove('selected');
+    if (radioYes) radioYes.checked = true;
+    if (detailsWrap) detailsWrap.style.display = 'block';
+    if (notice) notice.style.display = 'none';
+    log('📅 Date enabled: "Last Updates: [Date]" will appear on PDF', 'info');
+  } else {
+    if (cardNo) cardNo.classList.add('selected');
+    if (cardYes) cardYes.classList.remove('selected');
+    if (radioNo) radioNo.checked = true;
+    if (detailsWrap) detailsWrap.style.display = 'none';
+    if (notice) notice.style.display = 'block';
+    log('⛔ Date disabled: No date will appear on PDF', 'info');
+  }
+}
+
+function selectDate(type) {
+  selectedDateType = type;
+  const cardT = document.getElementById('card-tomorrow');
+  const cardC = document.getElementById('card-custom');
+  if (type === 'tomorrow') {
+    if (cardT) cardT.classList.add('selected');
+    if (cardC) cardC.classList.remove('selected');
+    const r = cardT ? cardT.querySelector('input') : null;
+    if (r) r.checked = true;
+  } else {
+    if (cardC) cardC.classList.add('selected');
+    if (cardT) cardT.classList.remove('selected');
+    const r = cardC ? cardC.querySelector('input') : null;
+    if (r) r.checked = true;
+  }
+}
+
+function getSelectedDateStr() {
+  if (!isDateEnabled) {
+    return null; // Return null so no date is included!
+  }
+  if (selectedDateType === 'tomorrow') {
+    const d = new Date();
+    d.setDate(d.getDate() + 1);
+    const options = { year: 'numeric', month: 'long', day: 'numeric' };
+    return d.toLocaleDateString('en-US', options);
+  } else {
+    const customInput = document.getElementById('customDate');
+    const val = customInput ? customInput.value : '';
+    if (val) {
+      const parts = val.split('-');
+      const d = new Date(parts[0], parts[1] - 1, parts[2]);
+      const options = { year: 'numeric', month: 'long', day: 'numeric' };
+      return d.toLocaleDateString('en-US', options);
+    }
+    const d = new Date();
+    return d.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+  }
+}
+
+// â”€â”€ TEMPLATE MANAGEMENT â”€â”€
+let currentTplMode = 'default';
+let uploadedTplContent = '';
+let pastedTplContent = '';
+
+function selectTplMode(mode) {
+  currentTplMode = mode;
+  ['default', 'body12', 'upload', 'paste'].forEach(m => {
+    const card = document.getElementById(`tpl-card-${m}`);
+    const panel = document.getElementById(`tpl-panel-${m}`);
+    if (card && panel) {
+      if (m === mode) {
+        card.classList.add('selected');
+        const radio = card.querySelector('input');
+        if (radio) radio.checked = true;
+        panel.style.display = 'block';
+      } else {
+        card.classList.remove('selected');
+        panel.style.display = 'none';
+      }
+    }
+  });
+
+  if (mode === 'paste' && !pastedTplContent) {
+    document.getElementById('tplCustomCode').value = DEFAULT_FIXED_TEMPLATE;
+    pastedTplContent = DEFAULT_FIXED_TEMPLATE;
+    handleTplCodeInput();
+  }
+}
+
+function handleTplFileUpload(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const status = document.getElementById('tplUploadStatus');
+  const reader = new FileReader();
+  reader.onload = function(evt) {
+    uploadedTplContent = evt.target.result;
+    status.style.display = 'block';
+    status.style.background = '#ecfdf5';
+    status.style.color = '#065f46';
+    status.style.border = '1px solid #a7f3d0';
+    status.innerHTML = `âœ… <strong>${file.name}</strong> à¦²à§‹à¦¡ à¦¹à¦¯à¦¼à§‡à¦›à§‡`;
+    log(`📄 Template file loaded: ${file.name}`, 'info');
+  };
+  reader.readAsText(file);
+}
+
+function handleTplCodeInput() {
+  pastedTplContent = document.getElementById('tplCustomCode').value;
+  const status = document.getElementById('tplPasteStatus');
+  if (pastedTplContent.trim().length > 0) {
+    status.innerHTML = `✓ Code loaded (${pastedTplContent.length} chars)`;
+    status.style.color = '#059669';
+  } else {
+    status.innerHTML = '';
+  }
+}
+
+function getActiveTemplateBody() {
+  if (currentTplMode === 'default') {
+    return DEFAULT_FIXED_TEMPLATE; // 1st Option: Just Image ("Imagesvsd")
+  }
+  if (currentTplMode === 'body12') {
+    return FULL_VIRAL_BODY; // 2nd Option: Full Body matching screenshot!
+  }
+  if (currentTplMode === 'upload' && uploadedTplContent.trim()) {
+    return uploadedTplContent;
+  }
+  if (currentTplMode === 'paste' && pastedTplContent.trim()) {
+    return pastedTplContent;
+  }
+  return DEFAULT_FIXED_TEMPLATE;
+}
+
+// â”€â”€ BUILD EXACT A4 PDF DOCUMENT MATCHING SCREENSHOT LAYOUT â”€â”€
+function formatProfessionalBodyHtml(rawBody, imgHtml, align = 'center', hasDate = true) {
+  const IMG_MARKER = "___IMG_MARKER___";
+  let text = rawBody.replace(/(?:\s*\n)?\s*Imagesvsd\s*(?:\n\s*)?/gi, `\n\n${IMG_MARKER}\n\n`);
+
+  const rawSections = text.split(/\r?\n\s*\r?\n+/);
+  const output = [];
+
+  for (let sec of rawSections) {
+    let trimmed = sec.trim();
+    if (!trimmed) continue;
+
+    if (trimmed === IMG_MARKER) {
+      output.push(imgHtml);
+      continue;
+    }
+
+    // Join internal soft line breaks with space to get natural 2-line wrapped paragraphs exactly as in user's screenshot
+    const cleanText = trimmed.replace(/\r?\n+/g, ' ').replace(/\s+/g, ' ').trim();
+    if (!cleanText || cleanText.toLowerCase() === 'imagesvsd') continue;
+
+    // Skip redundant Titleesss or raw Last Update inside body if already rendered in header or if date is disabled
+    if (/^Titleesss$/i.test(cleanText)) continue;
+    if (/^Last Update:\s*[A-Za-z]+,?\s*\d{4}$/i.test(cleanText)) continue;
+    if (!hasDate && /(?:Last Updates?|LATEST UPDATES?)/i.test(cleanText)) continue;
+
+    output.push(`<div style="margin-bottom: 22px; line-height: 1.5; font-size: 11pt; color: #111111; text-align: ${align}; word-wrap: break-word; overflow-wrap: break-word;">${escapeHtml(cleanText)}</div>`);
+  }
+
+  return output.join('\n');
+}
+
+function buildPdfHtml(title, username, scriptUrl, imageUrl, dateStr, alignConfig = { title: 'left', date: 'left', body: 'left' }) {
+  let cleanTitle = title.replace(/viral video Viral Video/gi, "Viral Video")
+                        .replace(/video Video/gi, "Video")
+                        .replace(/Viral Viral/gi, "Viral");
+
+  let body = getActiveTemplateBody();
+  body = body.replace(/keywordss/g, username || 'viraltop');
+  body = body.replace(/Titleesss/g, cleanTitle);
+  const randomNum = String(Math.floor(Math.random() * 59) + 1).padStart(2, '0');
+  body = body.replace(/numberss/g, randomNum);
+
+  if (dateStr) {
+    const currentMonthYear = new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+    body = body.replace(/Last Update:\s*[A-Za-z]+,?\s*\d{4}/gi, `Last Update: ${currentMonthYear}`);
+    body = body.replace(/\b(?:January|February|March|April|May|June|July|August|September|October|November|December)[,]?\s*20\d\d\b/gi, currentMonthYear);
+  } else {
+    // If Date is disabled (No), remove all date and update lines completely
+    body = body.replace(/Last Update:\s*[A-Za-z]+,?\s*\d{4}/gi, '');
+    body = body.replace(/.*LATEST UPDATES.*$/gmi, '');
+  }
+
+  const bAlign = (typeof alignConfig === 'object' && alignConfig.body) ? alignConfig.body : (alignConfig === 'center' ? 'center' : 'left');
+  const tAlign = (typeof alignConfig === 'object' && alignConfig.title) ? alignConfig.title : bAlign;
+  const dAlign = (typeof alignConfig === 'object' && alignConfig.date) ? alignConfig.date : bAlign;
+
+  const imgHtml = `<div class="image-container" style="text-align: ${bAlign}; margin: 18px 0 22px 0;"><a href="${escapeHtml(scriptUrl)}" target="_blank"><img src="${imageUrl}" style="width: 100%; max-width: 100%; height: auto; border: none; display: block; border-radius: 4px;" /></a></div>`;
+  const cleanBodyHtml = formatProfessionalBodyHtml(body, imgHtml, bAlign, Boolean(dateStr));
+
+  // If dateStr exists (isDateEnabled = true), render the date line; otherwise DO NOT RENDER DATE AT ALL!
+  const dateHtml = (dateStr && String(dateStr).trim().length > 0)
+    ? `<div style="font-size: 11pt; font-weight: bold; color: #111111; margin-bottom: 18px; text-align: ${dAlign};">Last Updates: <span style="color: #dc2626;">${escapeHtml(dateStr)}</span></div>`
+    : '';
+
+  return `
+    <div style="font-family: Arial, Helvetica, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; color: #111111; line-height: 1.6; background-color: #ffffff; padding: 22mm 20mm; width: 210mm; box-sizing: border-box; font-size: 11pt;">
+      <div style="font-size: 20pt; font-weight: bold; color: #111111; margin-bottom: 14px; text-align: ${tAlign}; word-wrap: break-word; overflow-wrap: break-word; line-height: 1.35;">${escapeHtml(cleanTitle)}</div>
+      ${dateHtml}
+      <div style="font-size: 11pt; color: #111111; text-align: ${bAlign};">${cleanBodyHtml}</div>
+    </div>
+  `;
+}
+
+// â”€â”€ LOG HELPERS â”€â”€
+function log(msg, type = 'info') {
+  const box = document.getElementById('logBox');
+  const div = document.createElement('div');
+  div.style.marginBottom = '4px';
+  if (type === 'success') div.style.color = '#34d399';
+  else if (type === 'error') div.style.color = '#f87171';
+  else div.style.color = '#94a3b8';
+  div.textContent = msg;
+  box.appendChild(div);
+  box.scrollTop = box.scrollHeight;
+}
+
+function clearLog() {
+  document.getElementById('logBox').innerHTML = '';
+}
+
+function escapeHtml(s) {
+  return String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
+}
+
+// â”€â”€ DOM TEXT EXTRACTOR (MATCHES VISUAL LAYOUT, FONT SIZE & ALIGNMENT 100%) â”€â”€
+function extractDomTextLines(container, doc) {
+  const lines = [];
+  let currentLine = null;
+  const pxToMm = 210 / (doc.body.offsetWidth || 793.7);
+
+  function walk(node) {
+    if (node.nodeType === Node.TEXT_NODE) {
+      const text = node.textContent;
+      if (!text || !text.trim()) return;
+
+      const words = text.split(/(\s+)/);
+      const parent = node.parentNode;
+      const win = parent.ownerDocument.defaultView || window;
+      const style = win.getComputedStyle(parent);
+      const fontSizePt = Math.max(8, parseFloat(style.fontSize) * 0.75);
+      const align = style.textAlign || 'left';
+
+      let offset = 0;
+      for (const word of words) {
+        if (!word) continue;
+        if (/^\s+$/.test(word)) {
+          offset += word.length;
+          continue;
+        }
+        const range = doc.createRange();
+        range.setStart(node, offset);
+        range.setEnd(node, offset + word.length);
+        const rect = range.getBoundingClientRect();
+        offset += word.length;
+
+        if (rect.width < 1 || rect.height < 1) continue;
+
+        const topMm = rect.top * pxToMm;
+        const leftMm = rect.left * pxToMm;
+        const rightMm = rect.right * pxToMm;
+        const bottomMm = rect.bottom * pxToMm;
+
+        // Group into line if on same horizontal baseline (within 3.5mm)
+        if (currentLine && Math.abs(currentLine.topMm - topMm) < 3.5) {
+          currentLine.words.push(word);
+          currentLine.rightMm = Math.max(currentLine.rightMm, rightMm);
+          currentLine.bottomMm = Math.max(currentLine.bottomMm, bottomMm);
+        } else {
+          if (currentLine) {
+            currentLine.text = currentLine.words.join(' ');
+            lines.push(currentLine);
+          }
+          currentLine = {
+            topMm: topMm,
+            leftMm: leftMm,
+            rightMm: rightMm,
+            bottomMm: bottomMm,
+            fontSizePt: fontSizePt,
+            align: align,
+            words: [word]
+          };
+        }
+      }
+    } else if (node.nodeType === Node.ELEMENT_NODE) {
+      // Skip images completely so NO invisible text is placed over banner image
+      if (node.tagName === 'IMG' || node.classList.contains('image-container')) return;
+      for (let child of node.childNodes) {
+        walk(child);
+      }
+    }
+  }
+
+  walk(container);
+  if (currentLine) {
+    currentLine.text = currentLine.words.join(' ');
+    lines.push(currentLine);
+  }
+  return lines;
+}
+
+// â”€â”€ ALIGNMENT & RESOLUTION CONTROLS â”€â”€
+let currentAlignMode = 'left';
+let currentResolutionScale = 2.083; // 200 DPI Fixed
+let currentImageFormat = 'PNG'; // PNG = ~1 MB lossless
+let currentJpegQuality = 1.0;
+let currentResMode = 'high';
+
+function selectAlignMode(mode) {
+  currentAlignMode = mode;
+  const cardL = document.getElementById('align-card-left');
+  const cardC = document.getElementById('align-card-center');
+  const radioL = document.getElementById('align-radio-left');
+  const radioC = document.getElementById('align-radio-center');
+  if (cardL && cardC) {
+    if (mode === 'left') {
+      cardL.classList.add('selected');
+      cardC.classList.remove('selected');
+      if (radioL) radioL.checked = true;
+    } else {
+      cardC.classList.add('selected');
+      cardL.classList.remove('selected');
+      if (radioC) radioC.checked = true;
+    }
+  }
+  const selInput = document.getElementById('textAlignMode');
+  if (selInput) selInput.value = mode;
+  log(`📐 Alignment set to: ${mode === 'left' ? 'Left Align (Title, Date & Body all on left)' : 'Center Align (Title, Date & Body centered)'}`, 'info');
+}
+
+function selectResolutionMode(res) {
+  currentResMode = res;
+  const cardU = document.getElementById('res-card-ultra');
+  const cardH = document.getElementById('res-card-high');
+  const cardL = document.getElementById('res-card-low');
+  const radioU = document.getElementById('res-radio-ultra');
+  const radioH = document.getElementById('res-radio-high');
+  const radioL = document.getElementById('res-radio-low');
+
+  [cardU, cardH, cardL].forEach(c => c && c.classList.remove('selected'));
+
+  if (res === 'ultra') {
+    currentResolutionScale = 3.2;
+    currentImageFormat = 'PNG';
+    currentJpegQuality = 1.0;
+    if (cardU) cardU.classList.add('selected');
+    if (radioU) radioU.checked = true;
+    log('💎 Resolution set to: Ultra HD (300+ DPI / Crystal Clear)', 'info');
+  } else if (res === 'low') {
+    currentResolutionScale = 1.5;
+    currentImageFormat = 'JPEG';
+    currentJpegQuality = 0.78;
+    if (cardL) cardL.classList.add('selected');
+    if (radioL) radioL.checked = true;
+    log('📦 Resolution set to: Low Size (~250KB - Fast Share)', 'info');
+  } else {
+    // 200 DPI Fixed (Default)
+    currentResolutionScale = 2.083;
+    currentImageFormat = 'JPEG';
+    currentJpegQuality = 0.85;
+    if (cardH) cardH.classList.add('selected');
+    if (radioH) radioH.checked = true;
+    log('⚡ Resolution set to: 200 DPI (Fixed / Sharp Text & ~300KB - 1MB)', 'info');
+  }
+}
+
+// â”€â”€ PDF GENERATOR CORE (NO FORCED AUTO DOWNLOAD) â”€â”€
+async function startProcess() {
+  const titles = getTitles();
+  if (titles.length === 0) {
+    alert('⚠️ Please enter or upload at least one title!');
+    return;
+  }
+
+  clearLog();
+  const btn = document.getElementById('submitBtn');
+  btn.disabled = true;
+  btn.innerHTML = '⏳ Generating PDFs...';
+
+  const progressWrap = document.getElementById('progressWrap');
+  const progressBar = document.getElementById('progressBar');
+  progressWrap.style.display = 'block';
+  progressBar.style.width = '0%';
+
+  // Reset previously generated items
+  generatedPdfsList = [];
+  generatedZipBlob = null;
+  document.getElementById('outputSection').style.display = 'none';
+
+  try {
+    const rawPrefix = document.getElementById('prefixInput').value.trim();
+    const userPrefix = rawPrefix ? toSlug(rawPrefix) : '';
+    const suffixMode = document.getElementById('suffixMode').value;
+    const alignVal = currentAlignMode || (document.getElementById('textAlignMode') ? document.getElementById('textAlignMode').value : 'left');
+    const isCenter = (alignVal === 'center' || alignVal === 'yes');
+    const chosenAlign = isCenter ? 'center' : 'left';
+    const alignConfig = { title: chosenAlign, date: chosenAlign, body: chosenAlign };
+    const scriptUrl = document.getElementById('scriptLink').value.trim() || DEFAULT_SCRIPT;
+    const imageUrl = currentImageSrc || DEFAULT_FIXED_IMAGE;
+    const dateStr = getSelectedDateStr();
+    const scaleVal = currentResolutionScale || 3.2;
+
+    log(`📐 Alignment: ${chosenAlign === 'left' ? 'Left Align (Title, Date & Body all on left)' : 'Center Align (Title, Date & Body centered)'}`, 'info');
+    let resMsg = '⚡ 200 DPI (Fixed / Sharp Text & ~300KB - 1MB)';
+    if (currentResMode === 'ultra') {
+      resMsg = '💎 Ultra HD (300+ DPI / Crystal Clear)';
+    } else if (currentResMode === 'low') {
+      resMsg = '📦 Low Size (~250KB - Fast Share)';
+    }
+    log(`ðŸ’Ž à¦°à§‡à¦œà§‹à¦²à¦¿à¦‰à¦¶à¦¨: ${resMsg}`, 'info');
+    if (userPrefix) {
+      log(`🏷️ Fixed Username: ${userPrefix}`, 'info');
+    } else {
+      log('🏷️ Username: Dynamic slug based on each title', 'info');
+    }
+    if (document.getElementById('scriptLink').value.trim()) {
+      log('🔗 Script Link: Custom target link active', 'info');
+    } else {
+      log('🔗 Script Link: Hidden default redirect link active', 'info');
+    }
+    log(`🖼️ Image: ${currentImageName}`, "info");
+    if (dateStr) {
+      log(`📅 Date: ${dateStr}`, "info");
+    } else {
+      log("⛔ Date: None (Date Disabled by User)", "info");
+    }
+    log('🚀 Offscreen A4 PDF rendering engine activated...\n', 'info');
+
+    const zip = new JSZip();
+    const total = titles.length;
+    let success = 0, fail = 0;
+    const usedNames = new Set();
+
+    const sandbox = document.getElementById('pdfRenderSandbox');
+
+    for (let i = 0; i < total; i++) {
+      const title = titles[i];
+      // Generate a completely unique random code like xcn4d, io900, vnce2
+      let uniqueCode = generateUniqueUsername();
+      while (usedNames.has(uniqueCode)) {
+        uniqueCode = generateUniqueUsername();
+      }
+
+      let currentUsername;
+      let filename;
+
+      if (userPrefix) {
+        currentUsername = userPrefix;
+        if (suffixMode === 'serial') {
+          filename = `${userPrefix}-${i + 1}.pdf`;
+        } else if (suffixMode === 'none') {
+          filename = (total === 1) ? `${userPrefix}.pdf` : `${userPrefix}-${i + 1}.pdf`;
+        } else {
+          filename = `${userPrefix}-${uniqueCode}.pdf`;
+        }
+      } else {
+        if (suffixMode === 'title30' || suffixMode === 'title20') {
+          // Take first 30 characters of title slug + unique code (e.g. american-sex-video-clip-cxx4d)
+          const titleSlug30 = toSlug(title).slice(0, 30).replace(/-+$/, '') || 'video';
+          currentUsername = `${titleSlug30}-${uniqueCode}`;
+          filename = `${titleSlug30}-${uniqueCode}.pdf`;
+        } else if (suffixMode === 'serial') {
+          currentUsername = uniqueCode;
+          filename = `${uniqueCode}-${i + 1}.pdf`;
+        } else {
+          // Pure unique code
+          currentUsername = uniqueCode;
+          filename = `${uniqueCode}.pdf`;
+        }
+      }
+
+      while (usedNames.has(filename)) {
+        uniqueCode = generateUniqueUsername();
+        if (userPrefix) {
+          filename = `${userPrefix}-${uniqueCode}.pdf`;
+        } else if (suffixMode === 'title30' || suffixMode === 'title20') {
+          const titleSlug30 = toSlug(title).slice(0, 30).replace(/-+$/, '') || 'video';
+          currentUsername = `${titleSlug30}-${uniqueCode}`;
+          filename = `${titleSlug30}-${uniqueCode}.pdf`;
+        } else {
+          currentUsername = uniqueCode;
+          filename = `${uniqueCode}.pdf`;
+        }
+      }
+      usedNames.add(uniqueCode);
+      usedNames.add(filename);
+
+      try {
+        // Build HTML string for this PDF (currentUsername replaces keywordss, alignConfig applies text-align)
+        const pdfHtmlStr = buildPdfHtml(title, currentUsername, scriptUrl, imageUrl, dateStr, alignConfig);
+
+        // Create an isolated off-screen iframe positioned far outside the viewport (-9999px)
+        // This guarantees that NOTHING ever appears, flashes, or pops up on mobile or desktop screens!
+        const iframe = document.createElement('iframe');
+        iframe.style.cssText = 'position:fixed;left:-9999px;top:-9999px;width:794px;height:1123px;border:none;pointer-events:none;z-index:-99999;';
+        document.body.appendChild(iframe);
+
+        const iframeDoc = iframe.contentWindow.document;
+        iframeDoc.open();
+        iframeDoc.write(`
+          <!DOCTYPE html>
+          <html>
+            <head>
+              <meta charset="utf-8">
+              <style>
+                * { box-sizing: border-box; }
+                body { 
+                  margin: 0; 
+                  padding: 0; 
+                  background: #ffffff; 
+                  width: 794px;
+                  -webkit-font-smoothing: antialiased;
+                  -moz-osx-font-smoothing: grayscale;
+                  text-rendering: optimizeLegibility;
+                }
+              </style>
+            </head>
+            <body>
+              ${pdfHtmlStr}
+            </body>
+          </html>
+        `);
+        iframeDoc.close();
+
+        // Wait for iframe rendering and images to settle
+        await new Promise(r => setTimeout(r, 120));
+
+        // Measure exact image bounding box inside the iframe (NOT Date, NOT Title)
+        let imgLinkCoords = null;
+        const imgEl = iframeDoc.querySelector('.image-container img') || iframeDoc.querySelector('img');
+        if (imgEl) {
+          const rect = imgEl.getBoundingClientRect();
+          const pxToMm = 210 / (iframeDoc.body.offsetWidth || 793.7);
+          const xMm = rect.left * pxToMm;
+          const yMm = rect.top * pxToMm;
+          const wMm = rect.width * pxToMm;
+          const hMm = rect.height * pxToMm;
+          if (wMm > 5 && hMm > 5) {
+            imgLinkCoords = { x: xMm, y: yMm, w: wMm, h: hMm };
+          }
+        }
+
+        // Extract exact text lines from iframe DOM matching visual font size, coordinates, and alignment 100%
+        const targetEl = iframeDoc.body.firstElementChild || iframeDoc.body;
+        const extractedLines = extractDomTextLines(targetEl, iframeDoc);
+
+        // Capture iframe content to canvas (completely off-screen, 0% visible on screen)
+        const canvas = await html2canvas(targetEl, {
+          scale: scaleVal,
+          useCORS: true,
+          allowTaint: true,
+          logging: false,
+          backgroundColor: '#ffffff',
+          width: 794,
+          windowWidth: 794,
+          imageTimeout: 0
+        });
+
+        // Remove iframe immediately after capture
+        document.body.removeChild(iframe);
+
+        // Convert canvas to PDF using jsPDF
+        const { jsPDF } = window.jspdf;
+        const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+        
+        // Clean title for PDF metadata
+        const cleanTitle = title.replace(/viral video Viral Video/gi, "Viral Video")
+                                .replace(/video Video/gi, "Video")
+                                .replace(/Viral Viral/gi, "Viral")
+                                .trim();
+
+        // Embed Title in PDF metadata so browser PDF viewers display the exact Title in the top toolbar
+        pdf.setProperties({
+          title: cleanTitle,
+          subject: cleanTitle,
+          author: 'PDF Make Generator',
+          creator: 'PDF Make Generator'
+        });
+
+        const pageW = pdf.internal.pageSize.getWidth();
+        const pageH = pdf.internal.pageSize.getHeight();
+        const imgFmt = (currentImageFormat || 'PNG').toUpperCase();
+        const imgQuality = currentJpegQuality || 1.0;
+        const imgData = imgFmt === 'JPEG'
+          ? canvas.toDataURL('image/jpeg', imgQuality)
+          : canvas.toDataURL('image/png');
+        const imgW = pageW;
+        const imgH = (canvas.height * pageW) / canvas.width;
+
+        // Dynamic page calculation: 1 page if content fits; adds more pages only when content is genuinely taller
+        let yPos = 0;
+        let pIndex = 0;
+        const minOverflow = 15; // Require at least 15mm meaningful content to create a next page
+
+        while (yPos === 0 || (yPos < imgH - minOverflow)) {
+          if (pIndex > 0) pdf.addPage();
+          pdf.addImage(imgData, imgFmt, 0, -yPos, imgW, imgH, undefined, 'FAST');
+
+          // Selectable text layer (exact line-by-line match with visual layout, font size & alignment)
+          try {
+            pdf.saveGraphicsState();
+            pdf.setFont('helvetica', 'normal');
+
+            const pageTopMm = pIndex * pageH;
+            const pageBottomMm = (pIndex + 1) * pageH;
+
+            for (const line of extractedLines) {
+              if (line.topMm >= pageTopMm && line.topMm < pageBottomMm) {
+                const relY = (line.topMm - pageTopMm) + (line.fontSizePt * 0.3527 * 0.85);
+                pdf.setFontSize(line.fontSizePt);
+
+                let x = line.leftMm;
+                let opt = { renderingMode: 'invisible' };
+                if (line.align === 'center') {
+                  x = (line.leftMm + line.rightMm) / 2;
+                  opt.align = 'center';
+                } else if (line.align === 'right') {
+                  x = line.rightMm;
+                  opt.align = 'right';
+                } else {
+                  x = line.leftMm;
+                  opt.align = 'left';
+                }
+
+                try {
+                  pdf.text(line.text, x, relY, opt);
+                } catch(e) {}
+              }
+            }
+            pdf.restoreGraphicsState();
+          } catch(eText) {
+            console.warn('Text layer error:', eText);
+          }
+
+          // ONLY the image banner is clickable on its page (NOT Date, NOT Title)
+          if (imgLinkCoords && typeof pdf.link === 'function') {
+            const pageTopMm = pIndex * pageH;
+            const pageBottomMm = (pIndex + 1) * pageH;
+            if (imgLinkCoords.y >= pageTopMm && imgLinkCoords.y < pageBottomMm) {
+              const relY = imgLinkCoords.y - pageTopMm;
+              try {
+                pdf.link(imgLinkCoords.x, relY, imgLinkCoords.w, imgLinkCoords.h, { url: scriptUrl });
+              } catch(e) {}
+            }
+          }
+          yPos += pageH;
+          pIndex++;
+        }
+
+        const pdfBlob = pdf.output('blob');
+        const pdfUrl = URL.createObjectURL(pdfBlob);
+
+        // Save to individual files list
+        generatedPdfsList.push({
+          id: i + 1,
+          filename: filename,
+          title: title,
+          blob: pdfBlob,
+          url: pdfUrl,
+          sizeKb: Math.round(pdfBlob.size / 1024)
+        });
+
+        // Add PDF to ZIP
+        zip.file(filename, pdfBlob);
+        success++;
+        log(`✅ [${i + 1}/${total}] PDF generated → ${filename}`, 'success');
+
+      } catch (err) {
+        fail++;
+        log(`❌ [${i + 1}/${total}] Generation error: ${err.message}`, 'error');
+      }
+
+      const pct = Math.round(((i + 1) / total) * 100);
+      progressBar.style.width = `${pct}%`;
+      btn.innerHTML = `⏳ Generating PDFs... (${i + 1}/${total})`;
+
+      // Micro yield to keep UI smooth
+      await new Promise(r => setTimeout(r, 40));
+    }
+
+    sandbox.innerHTML = '';
+
+    if (success > 0) {
+      log(`\n📦 Packing all PDFs into ZIP archive in background...`, 'info');
+      
+      generatedZipBlob = await zip.generateAsync({
+        type: 'blob',
+        compression: 'DEFLATE',
+        compressionOptions: { level: 1 }
+      });
+      generatedZipFilename = dateStr ? `pdf-output-${toSlug(dateStr)}.zip` : 'pdf-output.zip';
+
+      log(`🎉 All PDFs generated successfully! (${success} files)`, 'success');
+      log('👉 You can now download individual files below or click the ZIP button.', 'info');
+
+      // Render Output Section with individual download buttons
+      renderOutputSection();
+    } else {
+      log('\n❌ No PDFs could be generated!', 'error');
+    }
+
+  } catch (err) {
+    console.error('Generation Error:', err);
+    log(`\n❌ Unexpected error: ${err.message}`, 'error');
+    alert(`Error: ${err.message}`);
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = '⚡ Generate PDFs';
+  }
+}
+
+// â”€â”€ RENDER OUTPUT SECTION (INDIVIDUAL DOWNLOAD + ZIP DOWNLOAD) â”€â”€
+function renderOutputSection() {
+  const section = document.getElementById('outputSection');
+  const countEl = document.getElementById('outTotalCount');
+  const listEl = document.getElementById('pdfItemsList');
+  const btnZip = document.getElementById('btnDownloadZip');
+
+  countEl.textContent = generatedPdfsList.length;
+  btnZip.innerHTML = `<span>📦 Download All PDFs (ZIP - ${generatedPdfsList.length} Files)</span>`;
+
+  listEl.innerHTML = generatedPdfsList.map((item) => `
+    <div class="pdf-item-row">
+      <div class="pdf-item-info">
+        <div class="pdf-item-filename">
+          <span>📄</span>
+          <span>${item.filename}</span>
+          <span style="font-size:11px; color:#10b981; font-weight:normal;">(${item.sizeKb} KB)</span>
+        </div>
+        <div class="pdf-item-title" title="${escapeHtml(item.title)}">
+          ${escapeHtml(item.title)}
+        </div>
+      </div>
+      <div class="pdf-item-actions">
+        <button type="button" onclick="viewPdf(${item.id - 1})" class="btn-single-view" title="Preview directly in browser">
+          👁️ View
+        </button>
+        <a href="${item.url}" download="${item.filename}" class="btn-single-dl" title="Download this PDF file">
+          📥 Download
+        </a>
+      </div>
+    </div>
+  `).join('');
+
+  section.style.display = 'block';
+
+  // Smooth scroll down to output section
+  section.scrollIntoView({ behavior: 'smooth' });
+}
+
+// â”€â”€ PREVIEW PDF WITH DOCUMENT TITLE â”€â”€
+function viewPdf(idx) {
+  const item = generatedPdfsList[idx];
+  if (!item) return;
+  const w = window.open('', '_blank');
+  if (w) {
+    w.document.write(`<!DOCTYPE html><html><head><meta charset="utf-8"><title>${escapeHtml(item.title)}</title><style>html,body{margin:0;padding:0;height:100%;overflow:hidden;background:#323639;}iframe{width:100%;height:100%;border:none;}</style></head><body><iframe src="${item.url}"></iframe></body></html>`);
+    w.document.close();
+  } else {
+    window.open(item.url, '_blank');
+  }
+}
+
+// â”€â”€ ZIP DOWNLOAD ON BUTTON CLICK ONLY â”€â”€
+function downloadAllAsZip() {
+  if (!generatedZipBlob) {
+    alert('⚠️ Please generate PDFs first!');
+    return;
+  }
+  saveAs(generatedZipBlob, generatedZipFilename);
+  log(`📥 ZIP download started (${generatedZipFilename})`, 'success');
+}
+
+// â”€â”€ INIT ON LOAD â”€â”€
+window.addEventListener('DOMContentLoaded', () => {
+  initTheme();
+  setTomorrowNote();
+  initImageGallery();
+  selectAlignMode('left');
+  selectResolutionMode('high');
+  selectTplMode("default");
+  toggleDateInclude(true);
+  document.getElementById('titlesArea').value = '';
+  updateCount();
+});
+</script>
+
+</body>
+</html>
