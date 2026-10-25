@@ -5,10 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>PDF Make Generator - GitHub Pages Edition</title>
   
-  <!-- Google Fonts: Inter & JetBrains Mono -->
+  <!-- Google Fonts: Top Trending Italian Luxury, Stylish Cursive & Viral Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Abril+Fatface&family=Alex+Brush&family=Anton&family=Bebas+Neue&family=Caveat:wght@400..700&family=Cinzel+Decorative:wght@400;700&family=Cinzel:wght@400..900&family=Courgette&family=Dancing+Script:wght@400..700&family=Great+Vibes&family=Inter:wght@400..800&family=Italiana&family=Italianno&family=JetBrains+Mono:wght@500;700&family=Kaushan+Script&family=Lobster&family=Marck+Script&family=Montserrat:ital,wght@0,400..800;1,400..800&family=Oswald:wght@400..700&family=Pacifico&family=Permanent+Marker&family=Playfair+Display:ital,wght@0,400..800;1,400..800&family=Poppins:ital,wght@0,400..800;1,400..800&family=Righteous&family=Roboto:ital,wght@0,400..700;1,400..700&family=Satisfy&display=swap" rel="stylesheet">
 
   <!-- Client-side Browser Libraries (100% Serverless GitHub Compatible) -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
@@ -310,7 +310,7 @@ window.VIRAL_IMAGES_DATA = [{"name": "Screenshot 2026-09-25 210713.png", "path":
 
     .input-grid {
       display: grid;
-      grid-template-columns: 1fr 1fr;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
       gap: 12px;
       margin-bottom: 12px;
     }
@@ -323,23 +323,30 @@ window.VIRAL_IMAGES_DATA = [{"name": "Screenshot 2026-09-25 210713.png", "path":
       display: flex;
       flex-direction: column;
       gap: 5px;
+      min-width: 0;
     }
 
     .input-group label {
       font-size: 0.8rem;
       font-weight: 600;
       color: var(--text-title);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
     .input-group input, .select-input {
       background: var(--input-bg);
       border: 1.5px solid var(--input-border);
       border-radius: 8px;
-      padding: 9px 12px;
+      padding: 8px 10px;
       color: var(--input-text);
-      font-size: 0.84rem;
+      font-size: 0.82rem;
       outline: none;
       font-family: inherit;
+      width: 100%;
+      max-width: 100%;
+      box-sizing: border-box;
     }
 
     .input-group input:focus, .select-input:focus {
@@ -841,7 +848,7 @@ window.VIRAL_IMAGES_DATA = [{"name": "Screenshot 2026-09-25 210713.png", "path":
     </div>
     <div class="header-right">
       <button id="themeToggleBtn" type="button" onclick="toggleTheme()" class="theme-toggle-btn" title="Switch Light / Dark Mode">
-        <span id="themeIcon">🌙</span> <span id="themeText">Dark Mode</span>
+        <span id="themeIcon">☀️</span> <span id="themeText">Light Mode</span>
       </button>
       <div class="badge-live">GitHub Live</div>
     </div>
@@ -903,13 +910,111 @@ window.VIRAL_IMAGES_DATA = [{"name": "Screenshot 2026-09-25 210713.png", "path":
     </div>
   </div>
 
-  <!-- STEP 2: TEXT ALIGNMENT & RESOLUTION (HIGH VISIBILITY CARDS) -->
+  <!-- STEP 2: TYPOGRAPHY, TEXT ALIGNMENT & RESOLUTION (HIGH VISIBILITY CARDS) -->
   <div class="step-card">
     <div class="step-header">
       <div class="step-badge">2</div>
       <div>
-        <div class="step-title">📐 Text Alignment &amp; HD Resolution</div>
-        <div class="step-sub">Select Left or Center alignment, and choose crystal-clear output resolution</div>
+        <div class="step-title">🔤 Title Font Style, Alignment &amp; HD Resolution</div>
+        <div class="step-sub">Customize title font family, font size, text alignment, and crystal-clear output resolution</div>
+      </div>
+    </div>
+
+    <!-- Title Font Family & Size Options Box (Compact & Clean) -->
+    <div style="margin-bottom: 16px; padding: 12px 14px; background: var(--card-active-bg); border: 1.5px solid var(--card-border); border-radius: 10px; box-sizing: border-box; width: 100%; max-width: 100%; overflow: hidden;">
+      <div class="label-row" style="margin-bottom: 8px;">
+        <div class="field-label" style="display:flex; align-items:center; gap:6px; font-size: 0.82rem;">
+          <span>🔤 Title Typography (টাইটেল ফন্ট ও সাইজ):</span>
+          <span class="selector-card-badge" style="background:#ef4444; color:#fff; font-size: 10px;">New</span>
+        </div>
+      </div>
+      
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 10px; margin-bottom: 6px; width: 100%; box-sizing: border-box;">
+        <!-- Font Family Dropdown Box -->
+        <div class="input-group">
+          <label for="titleFontFamily" style="font-size: 0.76rem; font-weight: 600;">ফন্ট (Font):</label>
+          <select id="titleFontFamily" class="select-input" onchange="updateTitleFontSettings()">
+            <optgroup label="👑 Italian & Luxury (ইতালিয়ান ও লাক্সারি)">
+              <option value="'Italiana', serif" style="font-family: 'Italiana', serif; font-size: 14px;">Italiana (Italian Fashion Serif)</option>
+              <option value="'Italianno', cursive" style="font-family: 'Italianno', cursive; font-size: 16px;">Italianno (Italian Calligraphy Script)</option>
+              <option value="'Playfair Display', serif" style="font-family: 'Playfair Display', serif; font-size: 14px;">Playfair Display (Vogue Luxury Editorial)</option>
+              <option value="'Cinzel', serif" style="font-family: 'Cinzel', serif; font-size: 13px;">Cinzel (Roman / Italian Heritage)</option>
+              <option value="'Cinzel Decorative', serif" style="font-family: 'Cinzel Decorative', serif; font-size: 13px;">Cinzel Decorative (Imperial Luxury)</option>
+              <option value="'Abril Fatface', cursive, serif" style="font-family: 'Abril Fatface', cursive, serif; font-size: 13px;">Abril Fatface (High-Contrast Luxury)</option>
+            </optgroup>
+            <optgroup label="✒️ Stylish Cursive & Italic (স্টাইলিশ স্ক্রিপ্ট ও ইটালিক)">
+              <option value="'Dancing Script', cursive" style="font-family: 'Dancing Script', cursive; font-size: 15px;">Dancing Script (Casual Cursive Script)</option>
+              <option value="'Great Vibes', cursive" style="font-family: 'Great Vibes', cursive; font-size: 16px;">Great Vibes (Royal Luxury Script)</option>
+              <option value="'Alex Brush', cursive" style="font-family: 'Alex Brush', cursive; font-size: 16px;">Alex Brush (Classic Calligraphy)</option>
+              <option value="'Satisfy', cursive" style="font-family: 'Satisfy', cursive; font-size: 14px;">Satisfy (Smooth Modern Brush)</option>
+              <option value="'Courgette', cursive" style="font-family: 'Courgette', cursive; font-size: 13px;">Courgette (Elegant Clean Script)</option>
+              <option value="'Pacifico', cursive" style="font-family: 'Pacifico', cursive; font-size: 13px;">Pacifico (Trendy Handwritten Script)</option>
+              <option value="'Lobster', cursive" style="font-family: 'Lobster', cursive; font-size: 13px;">Lobster (Bold Catchy Retro Script)</option>
+              <option value="'Caveat', cursive" style="font-family: 'Caveat', cursive; font-size: 15px;">Caveat (Signature Handwriting)</option>
+              <option value="'Kaushan Script', cursive" style="font-family: 'Kaushan Script', cursive; font-size: 14px;">Kaushan Script (Dynamic Brush Script)</option>
+              <option value="'Marck Script', cursive" style="font-family: 'Marck Script', cursive; font-size: 15px;">Marck Script (Fluid Felt Pen Cursive)</option>
+              <option value="'Permanent Marker', cursive" style="font-family: 'Permanent Marker', cursive; font-size: 13px;">Permanent Marker (Bold Viral Marker)</option>
+            </optgroup>
+            <optgroup label="🔥 Viral & Modern Headlines (ভাইরাল ও মডার্ন হেডলাইন)">
+              <option value="'Bebas Neue', sans-serif" style="font-family: 'Bebas Neue', sans-serif; font-size: 15px; letter-spacing: 0.5px;">Bebas Neue (Top #1 Viral Headline)</option>
+              <option value="'Oswald', sans-serif" style="font-family: 'Oswald', sans-serif; font-size: 13px;">Oswald (Bold Condensed Title)</option>
+              <option value="'Montserrat', sans-serif" style="font-family: 'Montserrat', sans-serif; font-size: 13px;">Montserrat (Premium Geometric Sans)</option>
+              <option value="'Poppins', sans-serif" style="font-family: 'Poppins', sans-serif; font-size: 13px;">Poppins (Clean Rounded Viral Title)</option>
+              <option value="'Righteous', cursive, sans-serif" style="font-family: 'Righteous', cursive, sans-serif; font-size: 13px;">Righteous (Futuristic Modern Display)</option>
+              <option value="'Anton', sans-serif" style="font-family: 'Anton', sans-serif; font-size: 13px;">Anton (Ultra Heavy Impact Headline)</option>
+            </optgroup>
+            <optgroup label="📄 Standard & Clean (স্ট্যান্ডার্ড ফন্ট)">
+              <option value="Arial, Helvetica, sans-serif" selected style="font-family: Arial, sans-serif;">Arial (Default Clean)</option>
+              <option value="'Roboto', Arial, sans-serif" style="font-family: 'Roboto', sans-serif;">Roboto (Clean Modern)</option>
+              <option value="'Inter', -apple-system, sans-serif" style="font-family: 'Inter', sans-serif;">Inter (Sleek UI Sans)</option>
+              <option value="'Segoe UI', -apple-system, sans-serif" style="font-family: 'Segoe UI', sans-serif;">Segoe UI</option>
+              <option value="Impact, Arial Black, sans-serif" style="font-family: Impact, sans-serif;">Impact (Heavy Title)</option>
+              <option value="'Trebuchet MS', sans-serif" style="font-family: 'Trebuchet MS', sans-serif;">Trebuchet MS</option>
+              <option value="Georgia, serif" style="font-family: Georgia, serif;">Georgia (Classic Book Serif)</option>
+            </optgroup>
+          </select>
+        </div>
+
+        <!-- Font Size Dropdown Box -->
+        <div class="input-group">
+          <label for="titleFontSize" style="font-size: 0.76rem; font-weight: 600;">সাইজ (Size):</label>
+          <select id="titleFontSize" class="select-input" onchange="updateTitleFontSettings()">
+            <option value="16pt">16pt (Small)</option>
+            <option value="18pt" selected>18pt (Default / Normal)</option>
+            <option value="20pt">20pt (Medium)</option>
+            <option value="22pt">22pt (Large)</option>
+            <option value="24pt">24pt (Extra Large)</option>
+            <option value="26pt">26pt (Huge)</option>
+          </select>
+        </div>
+
+        <!-- Font Weight Dropdown Box -->
+        <div class="input-group">
+          <label for="titleFontWeight" style="font-size: 0.76rem; font-weight: 600;">বোল্ডনেস (Weight):</label>
+          <select id="titleFontWeight" class="select-input" onchange="updateTitleFontSettings()">
+            <option value="bold" selected>Bold (বোল্ড)</option>
+            <option value="normal">Normal (স্বাভাবিক)</option>
+            <option value="800">Extra Bold (অতিরিক্ত বোল্ড)</option>
+            <option value="600">Semi-Bold (মাঝারি বোল্ড)</option>
+          </select>
+        </div>
+
+        <!-- Font Style Dropdown Box -->
+        <div class="input-group">
+          <label for="titleFontStyle" style="font-size: 0.76rem; font-weight: 600;">স্টাইল (Style):</label>
+          <select id="titleFontStyle" class="select-input" onchange="updateTitleFontSettings()">
+            <option value="normal" selected>Normal (স্বাভাবিক)</option>
+            <option value="italic">Italic (ইটালিক / বাঁকা)</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Compact 1-line Subtle Sample Preview -->
+      <div style="display: flex; align-items: center; gap: 8px; margin-top: 6px; font-size: 11px; color: var(--text-sub); overflow: hidden; width: 100%; box-sizing: border-box;">
+        <span style="flex-shrink: 0; opacity: 0.85;">👁️ নমুনা:</span>
+        <span id="titleStylePreview" style="font-family: Arial, Helvetica, sans-serif; font-size: 12px; font-weight: bold; color: var(--text-title); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: calc(100% - 70px); background: var(--input-bg); padding: 2px 8px; border-radius: 4px; border: 1px solid var(--input-border);">
+          [S.E.X 18+ videos] Sample Title Preview
+        </span>
       </div>
     </div>
 
@@ -919,31 +1024,31 @@ window.VIRAL_IMAGES_DATA = [{"name": "Screenshot 2026-09-25 210713.png", "path":
         <div class="field-label">📐 Text Alignment Selection (Where body text is aligned):</div>
       </div>
       <div class="align-cards-grid">
-        <div class="selector-card selected" id="align-card-left" onclick="selectAlignMode('left')">
+        <div class="selector-card" id="align-card-left" onclick="selectAlignMode('left')">
           <div class="selector-card-icon">👈</div>
           <div class="selector-card-content">
             <div class="selector-card-title">
               <span>Left Align</span>
-              <span class="selector-card-badge">Default / Recommended</span>
             </div>
             <div class="selector-card-desc">
               Title, Date, and Body text — <strong>all aligned to the left</strong> margin.
             </div>
           </div>
-          <input type="radio" name="alignRadio" id="align-radio-left" checked style="accent-color:#ef4444;">
+          <input type="radio" name="alignRadio" id="align-radio-left" style="accent-color:#ef4444;">
         </div>
 
-        <div class="selector-card" id="align-card-center" onclick="selectAlignMode('center')">
+        <div class="selector-card selected" id="align-card-center" onclick="selectAlignMode('center')">
           <div class="selector-card-icon">🎯</div>
           <div class="selector-card-content">
             <div class="selector-card-title">
               <span>Center Align</span>
+              <span class="selector-card-badge">Default / Recommended</span>
             </div>
             <div class="selector-card-desc">
               Title, Date, and Body text — <strong>perfectly centered</strong> in the middle.
             </div>
           </div>
-          <input type="radio" name="alignRadio" id="align-radio-center" style="accent-color:#ef4444;">
+          <input type="radio" name="alignRadio" id="align-radio-center" checked style="accent-color:#ef4444;">
         </div>
       </div>
     </div>
@@ -1267,217 +1372,13 @@ const DEFAULT_FIXED_IMAGE = (VIRAL_IMAGES[0] && VIRAL_IMAGES[0].path) ? VIRAL_IM
 const DEFAULT_FIXED_IMAGE_NAME = "Screenshot 2026-09-25 210713.png";
 
 // Full Body 12 Preset from newbody12.txt (108 lines)
-const FULL_BODY_12 = 
-`numberss sec ago â€” more watched viral sex videos - 2026 Original Clip Full SEX VIDEOS ON HD! The original video has gone viral xXx-videos On #Google~2026 the internet and left viewers following it on various social media platforms. Titleesss
+const FULL_BODY_12 = "numberss sec ago — more watched viral sex videos - 2026 Original Clip Full SEX VIDEOS ON HD! The original video has gone viral xXx-videos On #Google~2026 the internet and left viewers following it on various social media platforms. Titleesss\n\nImagesvsd\n\nDrop|MMS|** Desi MMS Indian Sex Videos & Viral Clips\n🔥🔥LATEST UPDATES: June, 2026🔥🔥\nviral hot video, Hot Alexis Texa viral sex-video,Viral Porn 2026.\n#Alexis Texa American Sex-Xxxxx Xxxx xXx-videos on Google~2026#\nSex Video Hot Sex Video Hot Porn viral video new link link original video link.\nSex video Videos Hot viral Sex Video Hot Porn viral\n#Chanel-Camryn#AlexaFlexy#Violet-Myers#FreyaParker#ChristyWhite#NatashaNice#Jes\nseJane#Nikki#Benz#MiaKhalifa#Emily#Willis#Abella#Danger#LelaStar#Alyx#Star#Kay\ndenKross#Alex#TransAngels#Mae#Angela#White#Violet-Myers#Jillian#Janson#Naomi#\nWoods#Kylie#Page#Dani#Daniels#Mia#Malkova#Xvideo-USA-2026# viral hot video, Hot\nAlexis Texa viral sex-video,Viral Porn 2026.\n#Alexis Texas#Date-2026-01-03-Time-00:08:52+00:00# new link. Original video link Viral\nCouple Sex USA. #Dani-Daniels Hot viral Sex Video Hot Porn viral xXx-videos on\nGoogle~2026 on social media x trending now.\n#Alexis Texas American Sex Videos! Hot #Alexis Texas USA Sex Video Hot Porn viral video.\nNew link link ʟᴇᴀᴋᴇᴅ Viral Dani Daniels Sex USA-2026 video on ᴠɪʀᴀʟ social media ˣ ᵀʷⁱᵗᵗᵉʳl\n#Alexis Texa American Sex-Xxxxx Xxxx xXx-videos on Google~2026#\nSex video new link link viral on social media x trending now.\nvideol Sex Videos Hot videol Sex Video Hot Porn viral video new link link ʟᴇᴀᴋᴇᴅ video\non ᴠɪʀᴀʟ social media\nˣ ᵀʷⁱᵗᵗᵉʳl\nvideo new link link ʟᴇᴀᴋᴇᴅ video on ᴠɪʀᴀʟ social media\nˣ ᵀʷⁱᵗᵗᵉʳ\nvideo Sex Videos Hot video Sex Video Hot Porn viral video new link link original video\nlink.Sex Videos Hot viral Sex Video Hot Porn viral video new link link viral on social\nmedia x trending now\nL𝚎aked V𝚒deo Actor xnxx xVideoviral video new link link First Time\nl𝚎aked video Kajal-Kumari Sex Videos Hot Kajal-Kumari video Sex Video Hot Porn\nviral video new link link original video viral\nvideo l𝚎aked on x twitter Sex Videos Hot Sex Video Hot Porn viral\nvideo new link link Viral video viral video viral video original video video\noficial twitter l𝚎aked video Nadia viral Sex Videos Hot Nadia viral Sex\nVideo Hot Porn viral video new link link original video viral\nvideo l𝚎aked on x twitter.. Actor XXX Sex Videos Hot Sex Video Hot Porn\nviral video new link link First Time Sex\nXXX V𝚒deo po𝚛 Original V𝚒deo V𝚒deo took the internet by storm and\namazed\nviewers on various\nSocial\nmedia platforms. Actor XXX Sex Videos Hot viral Video Hot Porn viral\nvideo\nnew link\nlink First Time Kajal-Kumari Sex XXX V𝚒deo po𝚛 , a young and talented\ndigital Videos creator, recently became famous thanks to this interesting\nV𝚒deo.\nL𝚎aked V𝚒deo Actor XXX Sex Videos Hot Sex Video Hot Porn viral video\nnew link link First\nTime Sex XXX V𝚒deo po𝚛 V𝚒ral V𝚒deo Original V𝚒deo L𝚒nk On\nSocial Media Telegram X\nTrending Tiktok (18+)\nL𝚎aked V𝚒deo Actor XXX Sex Videos Hot Sex\nVideo Hot Porn viral video new link link First\n“Update Trending Viral Video”\nTime Nadia viral Sex XXX V𝚒deo po𝚛 V𝚒ral V𝚒deo Original V𝚒deo\nL𝚒nk On Social Media X Trending\nTiktok\n(18+)\nL𝚎aked V𝚒deo Actor XXX Sex Videos Hot Sex\nVideo Hot Porn viral video new link link\nFirst Time Sex XXX V𝚒deo po𝚛 Original V𝚒deo V𝚒ral V𝚒deo\nL𝚎aked on X Twitter Latest News, Photos, V𝚒deos on L𝚎aked V𝚒deo\nOutdoor\nDesi Village\nThe Actor XXX Sex Videos Hot Sex Video Hot\nPorn viral video new link link First Time Sex XXX V𝚒deo po𝚛 Original\nVa𝚒deo V𝚒deo oficial twitter\nlatest XXX Sex Videos Hot Sex Video Hot Porn viral video new link link\nFirst Time Nadia viral Sex\nXXX V𝚒deo po𝚛 L𝚎aked V𝚒deo V𝚒ral On Social Media\nKompoz Me L𝚎aked Com Scoop Big XnXX Celebrity Latest V𝚒deos of\nL𝚎aked V𝚒deos\nXnx V𝚒ral L𝚎aked XXX Sex Videos Hot Sex\nVideo Hot Porn viral video new link link First Time viral Sex XXX\nV𝚒deo po𝚛 V𝚒ral l𝚒nk\nNoodles L𝚎aked V𝚒deo Trending V𝚒ral L𝚎aked V𝚒deo, Aakhir Woh Larki\nKon Thi\nBlue Flims 2026 L𝚎aked\nTrending L𝚎aked V𝚒deos V𝚒ral\nVIDEO]* Nadia viral Sex Videos Hot Nadia viral Sex Video Hot Porn viral\nvideo new link Full Link\n+18 ORIGINAL Rahma Mohsen Sex Videos Hot Rahma Mohsen Sex Video\nHot Porn\nviral video new link Video link\nXnxx!فیدیو سكس ھدیر عبد الرازق مقطع كامل ھ شا د قبل الحذف+< .\n[VIRAL]* Sex Videos Hot Sex Video Hot Porn viral\nvideo new link link Viral video Full Link\n18+ Viral Video Sex Videos Hot Sex Video Hot\nPorn viral video new link link Original Link Sex\nVideos Hot Sex Video Hot Porn viral video new link\nActor maya g viral video telegram * The video took the internet by storm\nand amazed\nviewers\non various social media platforms. maya g viral video telegram link, a\nyoung and\ntalented digital\ncreator, recently became famous thanks to this interesting video\nUnited States University\nHUB XXXX HUB\nXXX\n<<<X>>>\n#Upcoming porn scenes coming up in the next weeks from XXX sites.\nsdg sdg sdxfg sdg sdg";
 
-Imagesvsd
-
-Drop|MMS|** Desi MMS Indian Sex Videos & Viral Clips
-ðŸ”¥ðŸ”¥LATEST UPDATES: June, 2026ðŸ”¥ðŸ”¥
-viral hot video, Hot Alexis Texa viral sex-video,Viral Porn 2026.
-#Alexis Texa American Sex-Xxxxx Xxxx xXx-videos on Google~2026#
-Sex Video Hot Sex Video Hot Porn viral video new link link original video link.
-Sex video Videos Hot viral Sex Video Hot Porn viral
-#Chanel-Camryn#AlexaFlexy#Violet-Myers#FreyaParker#ChristyWhite#NatashaNice#Jes
-seJane#Nikki#Benz#MiaKhalifa#Emily#Willis#Abella#Danger#LelaStar#Alyx#Star#Kay
-denKross#Alex#TransAngels#Mae#Angela#White#Violet-Myers#Jillian#Janson#Naomi#
-Woods#Kylie#Page#Dani#Daniels#Mia#Malkova#Xvideo-USA-2026# viral hot video, Hot
-Alexis Texa viral sex-video,Viral Porn 2026.
-#Alexis Texas#Date-2026-01-03-Time-00:08:52+00:00# new link. Original video link Viral
-Couple Sex USA. #Dani-Daniels Hot viral Sex Video Hot Porn viral xXx-videos on
-Google~2026 on social media x trending now.
-#Alexis Texas American Sex Videos! Hot #Alexis Texas USA Sex Video Hot Porn viral video.
-New link link ÊŸá´‡á´€á´‹á´‡á´… Viral Dani Daniels Sex USA-2026 video on á´ ÉªÊ€á´€ÊŸ social media Ë£ áµ€Ê·â±áµ—áµ—áµ‰Ê³l
-#Alexis Texa American Sex-Xxxxx Xxxx xXx-videos on Google~2026#
-Sex video new link link viral on social media x trending now.
-videol Sex Videos Hot videol Sex Video Hot Porn viral video new link link ÊŸá´‡á´€á´‹á´‡á´… video
-on á´ ÉªÊ€á´€ÊŸ social media
-Ë£ áµ€Ê·â±áµ—áµ—áµ‰Ê³l
-video new link link ÊŸá´‡á´€á´‹á´‡á´… video on á´ ÉªÊ€á´€ÊŸ social media
-Ë£ áµ€Ê·â±áµ—áµ—áµ‰Ê³
-video Sex Videos Hot video Sex Video Hot Porn viral video new link link original video
-link.Sex Videos Hot viral Sex Video Hot Porn viral video new link link viral on social
-media x trending now
-LðšŽaked Vðš’deo Actor xnxx xVideoviral video new link link First Time
-lðšŽaked video Kajal-Kumari Sex Videos Hot Kajal-Kumari video Sex Video Hot Porn
-viral video new link link original video viral
-video lðšŽaked on x twitter Sex Videos Hot Sex Video Hot Porn viral
-video new link link Viral video viral video viral video original video video
-oficial twitter lðšŽaked video Nadia viral Sex Videos Hot Nadia viral Sex
-Video Hot Porn viral video new link link original video viral
-video lðšŽaked on x twitter.. Actor XXX Sex Videos Hot Sex Video Hot Porn
-viral video new link link First Time Sex
-XXX Vðš’deo poðš› Original Vðš’deo Vðš’deo took the internet by storm and
-amazed
-viewers on various
-Social
-media platforms. Actor XXX Sex Videos Hot viral Video Hot Porn viral
-video
-new link
-link First Time Kajal-Kumari Sex XXX Vðš’deo poðš› , a young and talented
-digital Videos creator, recently became famous thanks to this interesting
-Vðš’deo.
-LðšŽaked Vðš’deo Actor XXX Sex Videos Hot Sex Video Hot Porn viral video
-new link link First
-Time Sex XXX Vðš’deo poðš› Vðš’ral Vðš’deo Original Vðš’deo Lðš’nk On
-Social Media Telegram X
-Trending Tiktok (18+)
-LðšŽaked Vðš’deo Actor XXX Sex Videos Hot Sex
-Video Hot Porn viral video new link link First
-â€œUpdate Trending Viral Videoâ€
-Time Nadia viral Sex XXX Vðš’deo poðš› Vðš’ral Vðš’deo Original Vðš’deo
-Lðš’nk On Social Media X Trending
-Tiktok
-(18+)
-LðšŽaked Vðš’deo Actor XXX Sex Videos Hot Sex
-Video Hot Porn viral video new link link
-First Time Sex XXX Vðš’deo poðš› Original Vðš’deo Vðš’ral Vðš’deo
-LðšŽaked on X Twitter Latest News, Photos, Vðš’deos on LðšŽaked Vðš’deo
-Outdoor
-Desi Village
-The Actor XXX Sex Videos Hot Sex Video Hot
-Porn viral video new link link First Time Sex XXX Vðš’deo poðš› Original
-Vaðš’deo Vðš’deo oficial twitter
-latest XXX Sex Videos Hot Sex Video Hot Porn viral video new link link
-First Time Nadia viral Sex
-XXX Vðš’deo poðš› LðšŽaked Vðš’deo Vðš’ral On Social Media
-Kompoz Me LðšŽaked Com Scoop Big XnXX Celebrity Latest Vðš’deos of
-LðšŽaked Vðš’deos
-Xnx Vðš’ral LðšŽaked XXX Sex Videos Hot Sex
-Video Hot Porn viral video new link link First Time viral Sex XXX
-Vðš’deo poðš› Vðš’ral lðš’nk
-Noodles LðšŽaked Vðš’deo Trending Vðš’ral LðšŽaked Vðš’deo, Aakhir Woh Larki
-Kon Thi
-Blue Flims 2026 LðšŽaked
-Trending LðšŽaked Vðš’deos Vðš’ral
-VIDEO]* Nadia viral Sex Videos Hot Nadia viral Sex Video Hot Porn viral
-video new link Full Link
-+18 ORIGINAL Rahma Mohsen Sex Videos Hot Rahma Mohsen Sex Video
-Hot Porn
-viral video new link Video link
-Xnxx!ÙÛŒØ¯ÛŒÙˆ Ø³ÙƒØ³ Ú¾Ø¯ÛŒØ± Ø¹Ø¨Ø¯ Ø§Ù„Ø±Ø§Ø²Ù‚ Ù…Ù‚Ø·Ø¹ ÙƒØ§Ù…Ù„ Ú¾ Ø´Ø§ Ø¯ Ù‚Ø¨Ù„ Ø§Ù„Ø­Ø°Ù+< .
-[VIRAL]* Sex Videos Hot Sex Video Hot Porn viral
-video new link link Viral video Full Link
-18+ Viral Video Sex Videos Hot Sex Video Hot
-Porn viral video new link link Original Link Sex
-Videos Hot Sex Video Hot Porn viral video new link
-Actor maya g viral video telegram * The video took the internet by storm
-and amazed
-viewers
-on various social media platforms. maya g viral video telegram link, a
-young and
-talented digital
-creator, recently became famous thanks to this interesting video
-United States University
-HUB XXXX HUB
-XXX
-<<<X>>>
-#Upcoming porn scenes coming up in the next weeks from XXX sites.
-sdg sdg sdxfg sdg sdg`;
-
-// Default Fixed Template is Just Image (new 12.txt / "Imagesvsd")
 const DEFAULT_FIXED_TEMPLATE = "Imagesvsd";
 
 // Full Viral Body Preset from newbody11.txt (Fixed - 2nd option / viral mode)
-const FULL_VIRAL_BODY = 
-`numberss sec ago â€” New Viral Video The latest original video has taken the internet by storm and left viewers in on various social media platforms. Titleesss
+const FULL_VIRAL_BODY = "numberss sec ago — New Viral Video The latest original video has taken the internet by storm and left viewers in on various social media platforms. Titleesss\n\nImagesvsd\n\n\nLast Update: October, 2026\n\nTitleesss\n\n~SEXXXX VIDEOS) American sex video XXX sex videos sex videos xxx xxx videos sex video hot xxx xxx hd xxx video x05745ahyy\n\n+【 XXX@VIDEO!* 】porn tiktok video XXX sex videos sex videos xxx xxx videos sex video hot xxx xxx hd xxx video ##XX #XXX\n\nXNxx@VIDEO!Xnxx Ullu Web Series XXX Sex Videos Sex Videos XXX XXX Videos Sex Video Hot XXX XNXX HD\n\nxnnx!xxx*sex]) english cudai sex videos XXX sex videos sex videos xxx xxx videos sex video hot xxx xxx hd xxx video\n\n%*(SEX~VIDEO~XXX) xxx hd XXX Sex video Xvideo XXXX Sexy BF videos Xxx Xvideo XNX.COM! xx\n\n+👙🍆+SeX~VIDEO~XxX~!!)💋 XXX Indian School Girl Xxx Sex sex videos sex Videos\n\n(~SEXXXX VIRAL) American sex video XXX sex videos sex videos xxx xxx videos sex video hot xxx xxx hd xxx video\n\nXnxx-videos! Sexy Beautiful Japanese Porn Xxx sexy Xvideo bf xxxx xxx sex xVideo 5eZk\n\n🥾+👙>!!🍆(SEX~Porn🌶XXX) XXX www sex video XXX sex videos sex videos xxx xxx videos sex video hot xxx X.X.X hd xxx video 𝐱𝐇𝐚𝐦𝐬𝐥𝐞𝐉 𝐗𝐍𝐗.𝐂𝐎m\n\n~@^(UpDaTeD)+XVIDEOS.COM) xxx video xxx video xxx sex videos PornHub 0 xxx video xxx video\n\n[EXCLUSIVE XXX]porn free video XXX sex videos sex videos xxx xxx videos sex video hot xxx xxx hd xxx video\n\n~!xXx-videos! Tamil sex video XXX sex videos sex videos xxx xxx videos sex video hot xxx xxx hd xxx Videos Tube8 , HD[11Gi7939H6T]\n\n✔~@^()+XVIDEOS.COM) school girl xxx video Xxx Videos Sex Video Xnxx.Com 2026 school girl xxx video\n\n+👙+💥XXX🍆SEX~Porn!) xnxx doctor eman viral video original xxx xxxx xx xxx xx Sex Video xxx sex videos PornHub QCDXZ34567\n\n(~SEXXXX VIRAL) Argentina sex video XXX sex videos sex videos xxx xxx videos sex video hot xxx xxx hd xxx video #XXX\n\n>!!@hot^%xxx!video) xnxx ullu video XXX sex videos sex videos xxx xxx videos sex video hot xxx xxx hd xxx video 46132ltoc\n\nxNxx@VIDEO!*x xnxx ullu Web Series XXX sex videos sex videos xxx xxx videos sex video hot xxx xnxx hd\n\n👉👌【desi-xxx】🍑𓂸🍆* glasses Xxxsex xxxxxxxxxx xxxxxxxx ssexx xx xxx sex XXX xxx পর্ণ\n\n~SEX XXX VIRAL!!!) Brazil sex video XXX sex videos sex videos xxx xxx videos sex video hot xxx xxx hd xxx video\n\n[xXx]sex!+video+)porn tiktok video XXX sex videos sex videos xxx xxx videos sex video hot xxx xxx hd xxx video\n\nপর্ন xর্ন xx big xxx video XX New XXX Videos Porn Videos\n\n!!!&amp;#43;&amp;gt;!Xnxx^SEX! XNX Indian Web Series Hot Ullu XXX Sex Video xxx sex videos PornHub xxx-xnx xxx sex videos\n\n[xXx]💥sex!+video) سكس مصري جامد قوفلام 𝐗𝐗𝐗 𝐗𝐗𝐗𝐗 𝐗𝐗𝐗𝐗𝐗 𝐗𝐍𝐗𝐗.𝐂𝐎𝐌 𝐗𝐗𝐗 𝐗𝐗𝐗𝐗 𝐗𝐗𝐗𝐗𝐗\n\n😊^%XXX!Video) Standing hot XNXX video on xHamster.COM xxX | New Xxx Sex Videos Porn XNXX Videos Pornhub XNX.COM\n\nفيديو افلام سكس عر xxx পর্ণ xxx पोर्न नया वीडियो 𝐗𝐗𝐗 𝐗𝐗𝐗𝐗 𝐗𝐗𝐗𝐗𝐗 𝐗𝐍𝐗𝐗.𝐂𝐎𝐌 ##𝐗𝐗𝐗 #𝐗𝐗𝐗𝐗\n\n++XXX.VIDEO-!*]xxx ullu Bhabhi video XXX sex videos sex videos xxx xxx videos sex video hot xxx xxx hd xxx video newhq-xxx1k\n\n~🔥👙!XXX.SEX!+Xnxx) xxx videos sex video hot xxx xxx hd xxx video sex video hot xxx xxx hd xxx video Free\n\n+🍆❤️[XXx]xxX!+XXX)@$!)])sex video indian video XXX sex videos sex videos xxx xxx\n\n~💥Sex(Video*XXX)✅! xnXX Indonesia XXX‌ Porn Videos Best XXX 2026 XXX‌ XXX‌ sex video hot xxx xxx hd xxx video\n\n[clips 18+ videos] kambal hayma scandal pinay scandal viral X.X.X VIDEOS\n\n#xNxx@VIDEO!*xnxx ullu Web Series XXX sex videos sex videos xxx xxx videos sex video hot xxx xnxx hdus\n\n+[XXX*VIDEOs!] New sex video XXX sex videos sex videos xxx videos sex video free sex hot xxx video\n\n~SEXXXX VIDEOS) American sex video XXX sex videos sex videos xxx xxx videos sex video hot xxx xxx hd xxx video x05745ahyy\n\n +👙+💥XXX🍆SEX~Porn!) xnxx doctor eman viral video original xxx xxxx xx xxx xx Sex Video xxx sex videos PornHub QCDXZ34567\n \n +👙>!!🍆(SEX~Porn🌶XXX) XXX www sex video XXX sex videos sex videos xxx xxx videos sex video hot xxx xxx hd xxx video\n \n√$XXXSEX~TittiPorn!)) سكس مراهقين 𝕏ℕ𝕏𝕏 سسكس جامد افلام سكس عربية افلام جنسية أفلام سكس مترجم مصريمترجم عراقي مترجم عربي سكس, የወሲብ ቪዲዮ\n\nxH? سكس.مصرى 𝕏ℕ𝕏𝕏 سسكس جامد افلام سكس عربية افلام جنسية أفلام سكس مترجم مصريمترجم عراقي مترجم عربي سكس on Instagram - | xHmaster, PornoVideosHub\n\n{{{{PORN-VIDEOS}}}فيديو سكسي 𝕏ℕ𝕏𝕏 سسكس جامد افلام سكس عربية افلام جنسية أفلام سكس مترجم مصريمترجم عراقي مترجم عربي سكس Xvideo bf Xxx xnx sex\n\n18+[ NEW-VIDEOS]*! XNX~فيديو جنسي~) سكس خليجي  xxx xnxx xxxx xnxxx xxxxxxxxxxxx صور مثيرة، مقاطع إباحية، وأفلام إباحية مجانية ar-xxx\n\n~$+>!!~ARAB^%XXX!Videos) فيديو إباحي لفتاة أردنية XNXX.COM\n\n18+[ NEW-VIDEOS]*!  XXX XNXX~فيديو جنسي~) سكس خليجي  xxx xnxx xxxx xnxxx xxxxxxxxxxxx صور مثيرة، مقاطع إباحية، وأفلام إباحية مجانية ar-xxx65786789\n\nviewers\non various social media platforms. maya g viral video telegram link, a\nyoung and talented digital\nTitleesss\ncreator, recently became famous thanks to this interesting\nvideo United States University";
 
-Imagesvsd
-
-
-Last Update: October, 2026
-
-Titleesss
-
-~SEXXXX VIDEOS) American sex video XXX sex videos sex videos xxx xxx videos sex video hot xxx xxx hd xxx video x05745ahyy
-
-+ã€ XXX@VIDEO!* ã€‘porn tiktok video XXX sex videos sex videos xxx xxx videos sex video hot xxx xxx hd xxx video ##XX #XXX
-
-XNxx@VIDEO!Xnxx Ullu Web Series XXX Sex Videos Sex Videos XXX XXX Videos Sex Video Hot XXX XNXX HD
-
-xnnx!xxx*sex]) english cudai sex videos XXX sex videos sex videos xxx xxx videos sex video hot xxx xxx hd xxx video
-
-%*(SEX~VIDEO~XXX) xxx hd XXX Sex video Xvideo XXXX Sexy BF videos Xxx Xvideo XNX.COM! xx
-
-+ðŸ‘™ðŸ†+SeX~VIDEO~XxX~!!)ðŸ’‹ XXX Indian School Girl Xxx Sex sex videos sex Videos
-
-(~SEXXXX VIRAL) American sex video XXX sex videos sex videos xxx xxx videos sex video hot xxx xxx hd xxx video
-
-Xnxx-videos! Sexy Beautiful Japanese Porn Xxx sexy Xvideo bf xxxx xxx sex xVideo 5eZk
-
-ðŸ¥¾+ðŸ‘™>!!ðŸ†(SEX~PornðŸŒ¶XXX) XXX www sex video XXX sex videos sex videos xxx xxx videos sex video hot xxx X.X.X hd xxx video ð±ð‡ðšð¦ð¬ð¥ðžð‰ ð—ðð—.ð‚ðŽm
-
-~@^(UpDaTeD)+XVIDEOS.COM) xxx video xxx video xxx sex videos PornHub 0 xxx video xxx video
-
-[EXCLUSIVE XXX]porn free video XXX sex videos sex videos xxx xxx videos sex video hot xxx xxx hd xxx video
-
-~!xXx-videos! Tamil sex video XXX sex videos sex videos xxx xxx videos sex video hot xxx xxx hd xxx Videos Tube8 , HD[11Gi7939H6T]
-
-âœ”~@^()+XVIDEOS.COM) school girl xxx video Xxx Videos Sex Video Xnxx.Com 2026 school girl xxx video
-
-+ðŸ‘™+ðŸ’¥XXXðŸ†SEX~Porn!) xnxx doctor eman viral video original xxx xxxx xx xxx xx Sex Video xxx sex videos PornHub QCDXZ34567
-
-(~SEXXXX VIRAL) Argentina sex video XXX sex videos sex videos xxx xxx videos sex video hot xxx xxx hd xxx video #XXX
-
->!!@hot^%xxx!video) xnxx ullu video XXX sex videos sex videos xxx xxx videos sex video hot xxx xxx hd xxx video 46132ltoc
-
-xNxx@VIDEO!*x xnxx ullu Web Series XXX sex videos sex videos xxx xxx videos sex video hot xxx xnxx hd
-
-ðŸ‘‰ðŸ‘Œã€desi-xxxã€‘ðŸ‘ð“‚¸ðŸ†* glasses Xxxsex xxxxxxxxxx xxxxxxxx ssexx xx xxx sex XXX xxx à¦ªà¦°à§à¦£
-
-~SEX XXX VIRAL!!!) Brazil sex video XXX sex videos sex videos xxx xxx videos sex video hot xxx xxx hd xxx video
-
-[xXx]sex!+video+)porn tiktok video XXX sex videos sex videos xxx xxx videos sex video hot xxx xxx hd xxx video
-
-à¦ªà¦°à§à¦¨ xà¦°à§à¦¨ xx big xxx video XX New XXX Videos Porn Videos
-
-!!!&amp;#43;&amp;gt;!Xnxx^SEX! XNX Indian Web Series Hot Ullu XXX Sex Video xxx sex videos PornHub xxx-xnx xxx sex videos
-
-[xXx]ðŸ’¥sex!+video) Ø³ÙƒØ³ Ù…ØµØ±ÙŠ Ø¬Ø§Ù…Ø¯ Ù‚ÙˆÙÙ„Ø§Ù… ð—ð—ð— ð—ð—ð—ð— ð—ð—ð—ð—ð— ð—ðð—ð—.ð‚ðŽðŒ ð—ð—ð— ð—ð—ð—ð— ð—ð—ð—ð—ð—
-
-ðŸ˜Š^%XXX!Video) Standing hot XNXX video on xHamster.COM xxX | New Xxx Sex Videos Porn XNXX Videos Pornhub XNX.COM
-
-ÙÙŠØ¯ÙŠÙˆ Ø§ÙÙ„Ø§Ù… Ø³ÙƒØ³ Ø¹Ø± xxx à¦ªà¦°à§à¦£ xxx à¤ªà¥‹à¤°à¥à¤¨ à¤¨à¤¯à¤¾ à¤µà¥€à¤¡à¤¿à¤¯à¥‹ ð—ð—ð— ð—ð—ð—ð— ð—ð—ð—ð—ð— ð—ðð—ð—.ð‚ðŽðŒ ##ð—ð—ð— #ð—ð—ð—ð—
-
-++XXX.VIDEO-!*]xxx ullu Bhabhi video XXX sex videos sex videos xxx xxx videos sex video hot xxx xxx hd xxx video newhq-xxx1k
-
-~ðŸ”¥ðŸ‘™!XXX.SEX!+Xnxx) xxx videos sex video hot xxx xxx hd xxx video sex video hot xxx xxx hd xxx video Free
-
-+ðŸ†â¤ï¸[XXx]xxX!+XXX)@$!)])sex video indian video XXX sex videos sex videos xxx xxx
-
-~ðŸ’¥Sex(Video*XXX)âœ…! xnXX Indonesia XXXâ€Œ Porn Videos Best XXX 2026 XXXâ€Œ XXXâ€Œ sex video hot xxx xxx hd xxx video
-
-[clips 18+ videos] kambal hayma scandal pinay scandal viral X.X.X VIDEOS
-
-#xNxx@VIDEO!*xnxx ullu Web Series XXX sex videos sex videos xxx xxx videos sex video hot xxx xnxx hdus
-
-+[XXX*VIDEOs!] New sex video XXX sex videos sex videos xxx videos sex video free sex hot xxx video
-
-~SEXXXX VIDEOS) American sex video XXX sex videos sex videos xxx xxx videos sex video hot xxx xxx hd xxx video x05745ahyy
-
- +ðŸ‘™+ðŸ’¥XXXðŸ†SEX~Porn!) xnxx doctor eman viral video original xxx xxxx xx xxx xx Sex Video xxx sex videos PornHub QCDXZ34567
- 
- +ðŸ‘™>!!ðŸ†(SEX~PornðŸŒ¶XXX) XXX www sex video XXX sex videos sex videos xxx xxx videos sex video hot xxx xxx hd xxx video
- 
-âˆš$XXXSEX~TittiPorn!)) Ø³ÙƒØ³ Ù…Ø±Ø§Ù‡Ù‚ÙŠÙ† ð•â„•ð•ð• Ø³Ø³ÙƒØ³ Ø¬Ø§Ù…Ø¯ Ø§ÙÙ„Ø§Ù… Ø³ÙƒØ³ Ø¹Ø±Ø¨ÙŠØ© Ø§ÙÙ„Ø§Ù… Ø¬Ù†Ø³ÙŠØ© Ø£ÙÙ„Ø§Ù… Ø³ÙƒØ³ Ù…ØªØ±Ø¬Ù… Ù…ØµØ±ÙŠÙ…ØªØ±Ø¬Ù… Ø¹Ø±Ø§Ù‚ÙŠ Ù…ØªØ±Ø¬Ù… Ø¹Ø±Ø¨ÙŠ Ø³ÙƒØ³, á‹¨á‹ˆáˆ²á‰¥ á‰ªá‹²á‹®
-
-xH? Ø³ÙƒØ³.Ù…ØµØ±Ù‰ ð•â„•ð•ð• Ø³Ø³ÙƒØ³ Ø¬Ø§Ù…Ø¯ Ø§ÙÙ„Ø§Ù… Ø³ÙƒØ³ Ø¹Ø±Ø¨ÙŠØ© Ø§ÙÙ„Ø§Ù… Ø¬Ù†Ø³ÙŠØ© Ø£ÙÙ„Ø§Ù… Ø³ÙƒØ³ Ù…ØªØ±Ø¬Ù… Ù…ØµØ±ÙŠÙ…ØªØ±Ø¬Ù… Ø¹Ø±Ø§Ù‚ÙŠ Ù…ØªØ±Ø¬Ù… Ø¹Ø±Ø¨ÙŠ Ø³ÙƒØ³ on Instagram - | xHmaster, PornoVideosHub
-
-{{{{PORN-VIDEOS}}}ÙÙŠØ¯ÙŠÙˆ Ø³ÙƒØ³ÙŠ ð•â„•ð•ð• Ø³Ø³ÙƒØ³ Ø¬Ø§Ù…Ø¯ Ø§ÙÙ„Ø§Ù… Ø³ÙƒØ³ Ø¹Ø±Ø¨ÙŠØ© Ø§ÙÙ„Ø§Ù… Ø¬Ù†Ø³ÙŠØ© Ø£ÙÙ„Ø§Ù… Ø³ÙƒØ³ Ù…ØªØ±Ø¬Ù… Ù…ØµØ±ÙŠÙ…ØªØ±Ø¬Ù… Ø¹Ø±Ø§Ù‚ÙŠ Ù…ØªØ±Ø¬Ù… Ø¹Ø±Ø¨ÙŠ Ø³ÙƒØ³ Xvideo bf Xxx xnx sex
-
-18+[ NEW-VIDEOS]*! XNX~ÙÙŠØ¯ÙŠÙˆ Ø¬Ù†Ø³ÙŠ~) Ø³ÙƒØ³ Ø®Ù„ÙŠØ¬ÙŠ  xxx xnxx xxxx xnxxx xxxxxxxxxxxx ØµÙˆØ± Ù…Ø«ÙŠØ±Ø©ØŒ Ù…Ù‚Ø§Ø·Ø¹ Ø¥Ø¨Ø§Ø­ÙŠØ©ØŒ ÙˆØ£ÙÙ„Ø§Ù… Ø¥Ø¨Ø§Ø­ÙŠØ© Ù…Ø¬Ø§Ù†ÙŠØ© ar-xxx
-
-~$+>!!~ARAB^%XXX!Videos) ÙÙŠØ¯ÙŠÙˆ Ø¥Ø¨Ø§Ø­ÙŠ Ù„ÙØªØ§Ø© Ø£Ø±Ø¯Ù†ÙŠØ© XNXX.COM
-
-18+[ NEW-VIDEOS]*!  XXX XNXX~ÙÙŠØ¯ÙŠÙˆ Ø¬Ù†Ø³ÙŠ~) Ø³ÙƒØ³ Ø®Ù„ÙŠØ¬ÙŠ  xxx xnxx xxxx xnxxx xxxxxxxxxxxx ØµÙˆØ± Ù…Ø«ÙŠØ±Ø©ØŒ Ù…Ù‚Ø§Ø·Ø¹ Ø¥Ø¨Ø§Ø­ÙŠØ©ØŒ ÙˆØ£ÙÙ„Ø§Ù… Ø¥Ø¨Ø§Ø­ÙŠØ© Ù…Ø¬Ø§Ù†ÙŠØ© ar-xxx65786789
-
-viewers
-on various social media platforms. maya g viral video telegram link, a
-young and talented digital
-Titleesss
-creator, recently became famous thanks to this interesting
-video United States University`;
-// Default Script / Target URL (hidden inside image href, not shown as text)
 const DEFAULT_SCRIPT = "https://leakhdrvideo.blogspot.com/2026/06/pdf.html";
 
 // Initial Sample Titles
@@ -1518,11 +1419,11 @@ function applyTheme(theme) {
   const text = document.getElementById('themeText');
   if (theme === 'dark') {
     document.documentElement.setAttribute('data-theme', 'dark');
-    if (icon) icon.textContent = 'â˜€ï¸';
-    if (text) text.textContent = 'à¦¸à¦¾à¦¦à¦¾ à¦®à§‹à¦¡';
+    if (icon) icon.textContent = '\u2600\uFE0F';
+    if (text) text.textContent = 'Light Mode';
   } else {
     document.documentElement.removeAttribute('data-theme');
-    if (icon) icon.textContent = 'ðŸŒ™';
+    if (icon) icon.textContent = '\uD83C\uDF19';
     if (text) text.textContent = 'Dark Mode';
   }
 }
@@ -1563,8 +1464,11 @@ function toSlug(str) {
 function updateCount() {
   const text = document.getElementById('titlesArea').value;
   const lines = text.split('\n').map(t => t.trim()).filter(t => t.length > 0);
-  document.getElementById('titleCount').textContent = `${lines.length} à¦Ÿà¦¿ à¦Ÿà¦¾à¦‡à¦Ÿà§‡à¦²`;
+  document.getElementById('titleCount').textContent = `${lines.length} টি টাইটেল`;
   updatePreview();
+  if (typeof updateTitleFontSettings === 'function') {
+    updateTitleFontSettings();
+  }
 }
 
 function loadTxtFile(e) {
@@ -1844,10 +1748,10 @@ function handleTplCodeInput() {
 
 function getActiveTemplateBody() {
   if (currentTplMode === 'default') {
-    return DEFAULT_FIXED_TEMPLATE; // 1st Option: Just Image ("Imagesvsd")
+    return DEFAULT_FIXED_TEMPLATE; // 1st Option: new 12.txt Just Image ("Imagesvsd")
   }
   if (currentTplMode === 'body12') {
-    return FULL_VIRAL_BODY; // 2nd Option: Full Body matching screenshot!
+    return FULL_BODY_12; // 2nd Option: newbody12.txt Full Body Article
   }
   if (currentTplMode === 'upload' && uploadedTplContent.trim()) {
     return uploadedTplContent;
@@ -1858,7 +1762,7 @@ function getActiveTemplateBody() {
   return DEFAULT_FIXED_TEMPLATE;
 }
 
-// â”€â”€ BUILD EXACT A4 PDF DOCUMENT MATCHING SCREENSHOT LAYOUT â”€â”€
+// ── BUILD EXACT A4 PDF DOCUMENT MATCHING SCREENSHOT LAYOUT ──
 function formatProfessionalBodyHtml(rawBody, imgHtml, align = 'center', hasDate = true) {
   const IMG_MARKER = "___IMG_MARKER___";
   let text = rawBody.replace(/(?:\s*\n)?\s*Imagesvsd\s*(?:\n\s*)?/gi, `\n\n${IMG_MARKER}\n\n`);
@@ -1875,16 +1779,31 @@ function formatProfessionalBodyHtml(rawBody, imgHtml, align = 'center', hasDate 
       continue;
     }
 
-    // Join internal soft line breaks with space to get natural 2-line wrapped paragraphs exactly as in user's screenshot
-    const cleanText = trimmed.replace(/\r?\n+/g, ' ').replace(/\s+/g, ' ').trim();
-    if (!cleanText || cleanText.toLowerCase() === 'imagesvsd') continue;
+    if (trimmed.toLowerCase() === 'imagesvsd') continue;
 
-    // Skip redundant Titleesss or raw Last Update inside body if already rendered in header or if date is disabled
-    if (/^Titleesss$/i.test(cleanText)) continue;
-    if (/^Last Update:\s*[A-Za-z]+,?\s*\d{4}$/i.test(cleanText)) continue;
-    if (!hasDate && /(?:Last Updates?|LATEST UPDATES?)/i.test(cleanText)) continue;
+    // Break lines inside this section into clean readable paragraphs
+    const lines = trimmed.split(/\r?\n/).map(l => l.trim()).filter(Boolean);
+    let currentBlock = [];
 
-    output.push(`<div style="margin-bottom: 22px; line-height: 1.5; font-size: 11pt; color: #111111; text-align: ${align}; word-wrap: break-word; overflow-wrap: break-word;">${escapeHtml(cleanText)}</div>`);
+    for (let i = 0; i < lines.length; i++) {
+      const line = lines[i];
+      // Skip redundant Titleesss or raw Last Update if already handled in header or date is disabled
+      if (/^Titleesss$/i.test(line)) continue;
+      if (/^Last Update:\s*[A-Za-z]+,?\s*\d{4}$/i.test(line)) continue;
+      if (!hasDate && /(?:Last Updates?|LATEST UPDATES?)/i.test(line)) continue;
+
+      // Check if line is a new headline or bullet item
+      const isNewHeadline = (i === 0) || /^([#🔥+*~•\-\[👉😊√%@^<>&|]|Drop\||Numberss|Sex|Video|Actor|Noodles|Blue|Xnx)/i.test(line);
+      if (isNewHeadline && currentBlock.length > 0) {
+        output.push(`<div style="margin-bottom: 12px; line-height: 1.6; font-size: 11pt; color: #111111; text-align: ${align}; word-wrap: break-word; overflow-wrap: break-word;">${escapeHtml(currentBlock.join(' '))}</div>`);
+        currentBlock = [line];
+      } else {
+        currentBlock.push(line);
+      }
+    }
+    if (currentBlock.length > 0) {
+      output.push(`<div style="margin-bottom: 12px; line-height: 1.6; font-size: 11pt; color: #111111; text-align: ${align}; word-wrap: break-word; overflow-wrap: break-word;">${escapeHtml(currentBlock.join(' '))}</div>`);
+    }
   }
 
   return output.join('\n');
@@ -1911,9 +1830,14 @@ function buildPdfHtml(title, username, scriptUrl, imageUrl, dateStr, alignConfig
     body = body.replace(/.*LATEST UPDATES.*$/gmi, '');
   }
 
-  const bAlign = (typeof alignConfig === 'object' && alignConfig.body) ? alignConfig.body : (alignConfig === 'center' ? 'center' : 'left');
+  const bAlign = (typeof alignConfig === 'object' && alignConfig.body) ? alignConfig.body : (alignConfig === 'left' ? 'left' : 'center');
   const tAlign = (typeof alignConfig === 'object' && alignConfig.title) ? alignConfig.title : bAlign;
   const dAlign = (typeof alignConfig === 'object' && alignConfig.date) ? alignConfig.date : bAlign;
+
+  const fontFam = (alignConfig && alignConfig.titleFontFamily) ? alignConfig.titleFontFamily : (currentTitleFontFamily || 'Arial, Helvetica, sans-serif');
+  const fontSize = (alignConfig && alignConfig.titleFontSize) ? alignConfig.titleFontSize : (currentTitleFontSize || '18pt');
+  const fontWeight = (alignConfig && alignConfig.titleFontWeight) ? alignConfig.titleFontWeight : (currentTitleFontWeight || 'bold');
+  const fontStyle = (alignConfig && alignConfig.titleFontStyle) ? alignConfig.titleFontStyle : (currentTitleFontStyle || 'normal');
 
   const imgHtml = `<div class="image-container" style="text-align: ${bAlign}; margin: 18px 0 22px 0;"><a href="${escapeHtml(scriptUrl)}" target="_blank"><img src="${imageUrl}" style="width: 100%; max-width: 100%; height: auto; border: none; display: block; border-radius: 4px;" /></a></div>`;
   const cleanBodyHtml = formatProfessionalBodyHtml(body, imgHtml, bAlign, Boolean(dateStr));
@@ -1924,15 +1848,15 @@ function buildPdfHtml(title, username, scriptUrl, imageUrl, dateStr, alignConfig
     : '';
 
   return `
-    <div style="font-family: Arial, Helvetica, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; color: #111111; line-height: 1.6; background-color: #ffffff; padding: 22mm 20mm; width: 210mm; box-sizing: border-box; font-size: 11pt;">
-      <div style="font-size: 20pt; font-weight: bold; color: #111111; margin-bottom: 14px; text-align: ${tAlign}; word-wrap: break-word; overflow-wrap: break-word; line-height: 1.35;">${escapeHtml(cleanTitle)}</div>
+    <div style="font-family: 'Segoe UI Emoji', 'Segoe UI', -apple-system, BlinkMacSystemFont, Arial, 'Noto Color Emoji', 'Apple Color Emoji', 'Segoe UI Symbol', sans-serif; color: #111111; line-height: 1.6; background-color: #ffffff; padding: 22mm 20mm; width: 210mm; box-sizing: border-box; font-size: 11pt;">
+      <div style="font-family: ${fontFam}; font-size: ${fontSize}; font-weight: ${fontWeight}; font-style: ${fontStyle}; color: #111111; margin-bottom: 14px; text-align: ${tAlign}; word-wrap: break-word; overflow-wrap: break-word; line-height: 1.35;">${escapeHtml(cleanTitle)}</div>
       ${dateHtml}
       <div style="font-size: 11pt; color: #111111; text-align: ${bAlign};">${cleanBodyHtml}</div>
     </div>
   `;
 }
 
-// â”€â”€ LOG HELPERS â”€â”€
+// ── LOG HELPERS ──
 function log(msg, type = 'info') {
   const box = document.getElementById('logBox');
   const div = document.createElement('div');
@@ -2029,8 +1953,40 @@ function extractDomTextLines(container, doc) {
   return lines;
 }
 
-// â”€â”€ ALIGNMENT & RESOLUTION CONTROLS â”€â”€
-let currentAlignMode = 'left';
+// ── TITLE FONT & SIZE CONTROLS ──
+let currentTitleFontFamily = 'Arial, Helvetica, sans-serif';
+let currentTitleFontSize = '18pt';
+let currentTitleFontWeight = 'bold';
+let currentTitleFontStyle = 'normal';
+
+function updateTitleFontSettings() {
+  const familySelect = document.getElementById('titleFontFamily');
+  const sizeSelect = document.getElementById('titleFontSize');
+  const weightSelect = document.getElementById('titleFontWeight');
+  const styleSelect = document.getElementById('titleFontStyle');
+  const previewBox = document.getElementById('titleStylePreview');
+
+  if (familySelect) currentTitleFontFamily = familySelect.value;
+  if (sizeSelect) currentTitleFontSize = sizeSelect.value;
+  if (weightSelect) currentTitleFontWeight = weightSelect.value;
+  if (styleSelect) currentTitleFontStyle = styleSelect.value;
+
+  if (previewBox) {
+    previewBox.style.fontFamily = currentTitleFontFamily;
+    previewBox.style.fontWeight = currentTitleFontWeight;
+    previewBox.style.fontStyle = currentTitleFontStyle;
+    previewBox.style.fontSize = '12px'; // Keep small on screen UI so it never overflows
+    const titles = getTitles();
+    if (titles && titles.length > 0) {
+      previewBox.textContent = titles[0];
+    } else {
+      previewBox.textContent = '[Sample Title Preview]';
+    }
+  }
+}
+
+// ── ALIGNMENT & RESOLUTION CONTROLS ──
+let currentAlignMode = 'center';
 let currentResolutionScale = 2.083; // 200 DPI Fixed
 let currentImageFormat = 'PNG'; // PNG = ~1 MB lossless
 let currentJpegQuality = 1.0;
@@ -2055,6 +2011,7 @@ function selectAlignMode(mode) {
   }
   const selInput = document.getElementById('textAlignMode');
   if (selInput) selInput.value = mode;
+  updateTitleFontSettings();
   log(`📐 Alignment set to: ${mode === 'left' ? 'Left Align (Title, Date & Body all on left)' : 'Center Align (Title, Date & Body centered)'}`, 'info');
 }
 
@@ -2121,15 +2078,24 @@ async function startProcess() {
     const rawPrefix = document.getElementById('prefixInput').value.trim();
     const userPrefix = rawPrefix ? toSlug(rawPrefix) : '';
     const suffixMode = document.getElementById('suffixMode').value;
-    const alignVal = currentAlignMode || (document.getElementById('textAlignMode') ? document.getElementById('textAlignMode').value : 'left');
-    const isCenter = (alignVal === 'center' || alignVal === 'yes');
+    const alignVal = currentAlignMode || (document.getElementById('textAlignMode') ? document.getElementById('textAlignMode').value : 'center');
+    const isCenter = (alignVal !== 'left');
     const chosenAlign = isCenter ? 'center' : 'left';
-    const alignConfig = { title: chosenAlign, date: chosenAlign, body: chosenAlign };
+    const alignConfig = {
+      title: chosenAlign,
+      date: chosenAlign,
+      body: chosenAlign,
+      titleFontFamily: currentTitleFontFamily,
+      titleFontSize: currentTitleFontSize,
+      titleFontWeight: currentTitleFontWeight,
+      titleFontStyle: currentTitleFontStyle
+    };
     const scriptUrl = document.getElementById('scriptLink').value.trim() || DEFAULT_SCRIPT;
     const imageUrl = currentImageSrc || DEFAULT_FIXED_IMAGE;
     const dateStr = getSelectedDateStr();
     const scaleVal = currentResolutionScale || 3.2;
 
+    log(`🔤 Title Typography: Font=${currentTitleFontFamily.split(',')[0]} | Size=${currentTitleFontSize} | Weight=${currentTitleFontWeight} | Style=${currentTitleFontStyle}`, 'info');
     log(`📐 Alignment: ${chosenAlign === 'left' ? 'Left Align (Title, Date & Body all on left)' : 'Center Align (Title, Date & Body centered)'}`, 'info');
     let resMsg = '⚡ 200 DPI (Fixed / Sharp Text & ~300KB - 1MB)';
     if (currentResMode === 'ultra') {
@@ -2233,6 +2199,7 @@ async function startProcess() {
             <head>
               <meta charset="utf-8">
               <style>
+                @import url('https://fonts.googleapis.com/css2?family=Abril+Fatface&family=Alex+Brush&family=Anton&family=Bebas+Neue&family=Caveat:wght@400..700&family=Cinzel+Decorative:wght@400;700&family=Cinzel:wght@400..900&family=Courgette&family=Dancing+Script:wght@400..700&family=Great+Vibes&family=Inter:wght@400..800&family=Italiana&family=Italianno&family=JetBrains+Mono:wght@500;700&family=Kaushan+Script&family=Lobster&family=Marck+Script&family=Montserrat:ital,wght@0,400..800;1,400..800&family=Noto+Sans+Arabic:wght@400..700&family=Noto+Sans+Bengali:wght@400..700&family=Oswald:wght@400..700&family=Pacifico&family=Permanent+Marker&family=Playfair+Display:ital,wght@0,400..800;1,400..800&family=Poppins:ital,wght@0,400..800;1,400..800&family=Righteous&family=Roboto:ital,wght@0,400..700;1,400..700&family=Satisfy&display=swap');
                 * { box-sizing: border-box; }
                 body { 
                   margin: 0; 
@@ -2252,7 +2219,10 @@ async function startProcess() {
         `);
         iframeDoc.close();
 
-        // Wait for iframe rendering and images to settle
+        // Wait for iframe rendering and fonts/images to settle
+        if (iframeDoc.fonts && iframeDoc.fonts.ready) {
+          try { await iframeDoc.fonts.ready; } catch(e){}
+        }
         await new Promise(r => setTimeout(r, 120));
 
         // Measure exact image bounding box inside the iframe (NOT Date, NOT Title)
@@ -2506,10 +2476,11 @@ window.addEventListener('DOMContentLoaded', () => {
   initTheme();
   setTomorrowNote();
   initImageGallery();
-  selectAlignMode('left');
+  selectAlignMode('center');
   selectResolutionMode('high');
   selectTplMode("default");
   toggleDateInclude(true);
+  updateTitleFontSettings();
   document.getElementById('titlesArea').value = '';
   updateCount();
 });
